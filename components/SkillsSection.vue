@@ -27,7 +27,6 @@
                   <span class="text-xl">{{ tech.icon }}</span>
                   <span class="font-medium">{{ tech.name }}</span>
                 </span>
-                <span class="text-primary font-bold tabular-nums">{{ displayedLevels[`${category.category}-${tech.name}`] || 0 }}%</span>
               </div>
               <div class="h-2.5 bg-white/5 rounded-full overflow-hidden shadow-inner">
                 <div class="h-full rounded-full transition-all duration-1000 ease-out relative overflow-hidden"

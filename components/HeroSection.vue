@@ -3,18 +3,18 @@
     <!-- Animated gradient background -->
     <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 animate-pulse-slow"></div>
     
-    <!-- Floating elements -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div v-for="i in 20" :key="i" 
-           class="absolute rounded-full bg-primary/10 animate-float"
+    <!-- Code symbols and geometric shapes floating -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
+      <div v-for="(symbol, i) in codeSymbols" :key="i" 
+           class="absolute text-primary/40 font-mono text-2xl md:text-4xl animate-float"
            :style="{
-             width: `${Math.random() * 100 + 50}px`,
-             height: `${Math.random() * 100 + 50}px`,
              left: `${Math.random() * 100}%`,
              top: `${Math.random() * 100}%`,
              animationDelay: `${Math.random() * 5}s`,
-             animationDuration: `${Math.random() * 10 + 10}s`
-           }"></div>
+             animationDuration: `${Math.random() * 15 + 10}s`
+           }">
+        {{ symbol }}
+      </div>
     </div>
     
     <div class="text-center space-y-6 px-6 relative z-10">
@@ -42,15 +42,29 @@
       
       <!-- Social links with hover effects -->
       <div class="flex gap-4 justify-center pt-8">
-        <a v-for="social in data?.socials" :key="social.name" 
-           :href="social.url" target="_blank" rel="noopener"
-           class="relative group w-14 h-14 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary flex items-center justify-center transition-all duration-300 hover:scale-110"
-           :style="{ '--hover-color': social.color }">
+        <component
+          v-for="social in data?.socials" 
+          :key="social.name"
+          :is="social.name === 'Discord' ? 'button' : 'a'"
+          :href="social.name !== 'Discord' ? social.url : undefined"
+          :target="social.name !== 'Discord' ? '_blank' : undefined"
+          :rel="social.name !== 'Discord' ? 'noopener' : undefined"
+          @click="social.name === 'Discord' ? openDiscordModal(social) : null"
+          class="relative group w-14 h-14 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-primary flex items-center justify-center transition-all duration-300 hover:scale-110"
+          :style="{ '--hover-color': social.color }">
           <div class="absolute inset-0 rounded-full bg-gradient-to-r opacity-0 group-hover:opacity-20 blur transition-opacity"
                :style="{ background: social.color }"></div>
           <font-awesome-icon :icon="['fab', social.icon]" class="w-6 h-6 relative z-10 group-hover:scale-110 transition-transform" />
-        </a>
+        </component>
       </div>
+      
+      <!-- Discord Modal -->
+      <DiscordModal 
+        :isOpen="showDiscordModal"
+        :username="discordUsername"
+        :profileUrl="discordProfileUrl"
+        @close="showDiscordModal = false"
+      />
       
       <!-- Scroll indicator -->
       <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
@@ -69,6 +83,11 @@ const props = defineProps({
 
 const typewriterRef = ref(null)
 const typewriterText = ref('')
+const showDiscordModal = ref(false)
+const discordUsername = ref('')
+const discordProfileUrl = ref('')
+
+const codeSymbols = ['{ }', '< >', '[ ]', '( )', '/>', '=>', '...', '&&', '||', '??', '</>']
 
 const texts = [
   'Full Stack Developer',
@@ -80,6 +99,12 @@ const texts = [
 let textIndex = 0
 let charIndex = 0
 let isDeleting = false
+
+const openDiscordModal = (social) => {
+  discordUsername.value = social.username || 'fixeq.dev'
+  discordProfileUrl.value = social.url
+  showDiscordModal.value = true
+}
 
 onMounted(() => {
   const type = () => {

@@ -143,11 +143,12 @@
       "description": "Check out my open source projects and contributions"
     },
     {
-      "name": "Threads",
-      "url": "https://threads.com/@fixeq.dev",
-      "icon": "threads",
-      "color": "#FF0080",
-      "description": "Follow me for tech updates and insights"
+      "name": "Discord",
+      "url": "https://discord.com/users/853621876551188490",
+      "icon": "discord",
+      "color": "#5865F2",
+      "username": "fixeq.dev",
+      "description": "Connect with me on Discord"
     },
     {
       "name": "Instagram",

@@ -11,8 +11,11 @@
         <div class="absolute inset-0 bg-gradient-to-r from-primary via-secondary to-primary opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"></div>
         
         <div class="relative z-10">
-          <p class="text-lg md:text-xl text-gray-300 leading-relaxed mb-10 text-center max-w-3xl mx-auto">
+          <p class="text-lg md:text-xl text-gray-300 leading-relaxed mb-4 text-center max-w-3xl mx-auto">
             {{ data?.developer?.description }}
+          </p>
+          <p class="text-base text-gray-400 text-center mb-10 italic">
+            Also loves to <span class="text-primary font-semibold">vibecode</span> – coding with good vibes ✨
           </p>
           
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">

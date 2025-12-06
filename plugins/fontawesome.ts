@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { 
   faGithub, 
   faInstagram, 
-  faThreads,
+  faDiscord,
   faLinkedin,
   faTwitter
 } from '@fortawesome/free-brands-svg-icons'
@@ -39,7 +39,7 @@ config.autoAddCss = false
 library.add(
   faGithub,
   faInstagram,
-  faThreads,
+  faDiscord,
   faLinkedin,
   faTwitter,
   faArrowUp,
