@@ -31,32 +31,35 @@
 							{{ category.category }}
 						</h3>
 					</div>
-					<div class="space-y-5">
+					<div class="flex flex-wrap gap-3">
 						<div
 							v-for="tech in category.technologies"
 							:key="tech.name"
-							class="group/tech">
-							<div class="mb-2 flex justify-between">
-								<span
-									class="flex items-center gap-2 text-gray-300 transition-colors group-hover/tech:text-white">
+							class="group/tech relative overflow-hidden rounded-xl border border-white/10 px-4 py-3 transition-all duration-300 hover:scale-105 hover:border-white/30 hover:shadow-lg"
+							:style="{
+								background: `linear-gradient(135deg, ${tech.color}15 0%, ${tech.color}08 50%, transparent 100%)`,
+							}">
+							<div
+								class="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover/tech:opacity-100"
+								:style="{
+									background: `radial-gradient(circle at 50% 50%, ${tech.color}25, transparent 70%)`,
+								}"></div>
+							<div class="relative flex items-center gap-3">
+								<div
+									class="flex h-10 w-10 items-center justify-center rounded-lg transition-transform duration-300 group-hover/tech:scale-110"
+									:style="{
+										background: `linear-gradient(135deg, ${tech.color}30, ${tech.color}10)`,
+										boxShadow: `0 4px 15px ${tech.color}20`,
+									}">
 									<font-awesome-icon
 										:icon="tech.icon"
-										class="text-xl"
+										class="text-lg"
 										:style="{ color: tech.color }" />
-									<span class="font-medium">{{ tech.name }}</span>
-								</span>
-							</div>
-							<div class="h-2.5 overflow-hidden rounded-full bg-white/5 shadow-inner">
-								<div
-									class="relative h-full overflow-hidden rounded-full transition-all duration-1000 ease-out"
-									:class="inView ? 'animate-shimmer' : ''"
-									:style="{
-										width: `${inView ? tech.level : 0}%`,
-										background: `linear-gradient(90deg, ${tech.color}, ${adjustColor(tech.color, 40)})`,
-									}">
-									<div
-										class="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
 								</div>
+								<span
+									class="font-medium text-gray-200 transition-colors group-hover/tech:text-white">
+									{{ tech.name }}
+								</span>
 							</div>
 						</div>
 					</div>
@@ -67,83 +70,9 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
 	data: Object,
 })
-
-const inView = ref(false)
-const displayedLevels = ref({})
-const timers = ref([])
-
-const adjustColor = (color, amount) => {
-	const num = parseInt(color.replace('#', ''), 16)
-	const r = Math.min(255, (num >> 16) + amount)
-	const g = Math.min(255, ((num >> 8) & 0x00ff) + amount)
-	const b = Math.min(255, (num & 0x0000ff) + amount)
-	return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`
-}
-
-onMounted(() => {
-	const observer = new IntersectionObserver(
-		(entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting && !inView.value) {
-					inView.value = true
-					animateLevels()
-				}
-			})
-		},
-		{ threshold: 0.2 }
-	)
-
-	const section = document.getElementById('skills')
-	if (section) observer.observe(section)
-})
-
-onUnmounted(() => {
-	// Clean up all timers
-	timers.value.forEach((timer) => clearInterval(timer))
-	timers.value = []
-})
-
-const animateLevels = () => {
-	if (!props.data?.skills) return
-
-	props.data.skills.forEach((category) => {
-		category.technologies.forEach((tech) => {
-			const key = `${category.category}-${tech.name}`
-			let current = 0
-			const target = tech.level
-			const increment = target / 50
-
-			const timer = setInterval(() => {
-				current += increment
-				if (current >= target) {
-					displayedLevels.value[key] = target
-					clearInterval(timer)
-					timers.value = timers.value.filter((t) => t !== timer)
-				} else {
-					displayedLevels.value[key] = Math.floor(current)
-				}
-			}, 20)
-
-			timers.value.push(timer)
-		})
-	})
-}
 </script>
 
-<style scoped>
-@keyframes shimmer {
-	0% {
-		transform: translateX(-100%);
-	}
-	100% {
-		transform: translateX(100%);
-	}
-}
-
-.animate-shimmer::before {
-	animation: shimmer 2s infinite;
-}
-</style>
+<style scoped></style>

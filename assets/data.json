@@ -23,31 +23,26 @@
 			"technologies": [
 				{
 					"name": "JavaScript ES6+",
-					"level": 95,
 					"icon": ["fab", "js"],
 					"color": "#F7DF1E"
 				},
 				{
 					"name": "HTML5",
-					"level": 90,
 					"icon": ["fab", "html5"],
 					"color": "#E34F26"
 				},
 				{
 					"name": "CSS3 & Sass",
-					"level": 88,
 					"icon": ["fab", "css3-alt"],
 					"color": "#1572B6"
 				},
 				{
 					"name": "React.js",
-					"level": 85,
 					"icon": ["fab", "react"],
 					"color": "#61DAFB"
 				},
 				{
 					"name": "TypeScript",
-					"level": 82,
 					"icon": ["fas", "code"],
 					"color": "#3178C6"
 				}
@@ -59,25 +54,21 @@
 			"technologies": [
 				{
 					"name": "Node.js",
-					"level": 92,
 					"icon": ["fab", "node-js"],
 					"color": "#339933"
 				},
 				{
 					"name": "Python",
-					"level": 85,
 					"icon": ["fab", "python"],
 					"color": "#3776AB"
 				},
 				{
 					"name": "Express.js",
-					"level": 90,
 					"icon": ["fas", "cubes"],
-					"color": "#000000"
+					"color": "#68A063"
 				},
 				{
 					"name": "MongoDB",
-					"level": 78,
 					"icon": ["fas", "leaf"],
 					"color": "#47A248"
 				}
@@ -89,19 +80,16 @@
 			"technologies": [
 				{
 					"name": "Java (Android)",
-					"level": 80,
 					"icon": ["fab", "java"],
 					"color": "#007396"
 				},
 				{
 					"name": "Kotlin",
-					"level": 75,
 					"icon": ["fas", "bullseye"],
 					"color": "#7F52FF"
 				},
 				{
 					"name": "Android Studio",
-					"level": 78,
 					"icon": ["fab", "android"],
 					"color": "#3DDC84"
 				}
@@ -113,25 +101,21 @@
 			"technologies": [
 				{
 					"name": "Arch Linux",
-					"level": 88,
 					"icon": ["fab", "linux"],
 					"color": "#1793D1"
 				},
 				{
 					"name": "Git & GitHub",
-					"level": 85,
 					"icon": ["fab", "git-alt"],
 					"color": "#F05032"
 				},
 				{
 					"name": "Docker",
-					"level": 70,
 					"icon": ["fab", "docker"],
 					"color": "#2496ED"
 				},
 				{
 					"name": "VS Code",
-					"level": 95,
 					"icon": ["fas", "laptop-code"],
 					"color": "#007ACC"
 				}
