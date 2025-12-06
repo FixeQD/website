@@ -15,7 +15,7 @@
             {{ data?.developer?.description }}
           </p>
           <p class="text-base text-gray-400 text-center mb-10 italic">
-            Also loves to <span class="text-primary font-semibold">vibecode</span> – coding with good vibes ✨
+            Also loves to <span class="text-primary font-semibold">vibecode</span> – coding with AI assistance and good vibes ✨🤖
           </p>
           
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
