@@ -53,7 +53,17 @@
 							v-for="achievement in data?.achievements"
 							:key="achievement.title"
 							class="group/achievement flex items-start gap-4 rounded-xl border border-white/5 bg-white/5 p-4 transition-all duration-300 hover:border-primary/30 hover:bg-white/10">
-							<div class="text-3xl">{{ achievement.icon }}</div>
+							<div
+								class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover/achievement:scale-110"
+								:style="{
+									background: `linear-gradient(135deg, ${achievement.color}30, ${achievement.color}10)`,
+									boxShadow: `0 4px 15px ${achievement.color}20`,
+								}">
+								<font-awesome-icon
+									:icon="achievement.icon"
+									class="text-xl"
+									:style="{ color: achievement.color }" />
+							</div>
 							<div>
 								<h4
 									class="mb-1 text-lg font-bold transition-colors group-hover/achievement:text-primary">

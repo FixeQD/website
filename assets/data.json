@@ -150,22 +150,26 @@
 		{
 			"title": "Self-taught Developer",
 			"description": "Built expertise through continuous learning and hands-on projects",
-			"icon": "🎓"
+			"icon": ["fas", "graduation-cap"],
+			"color": "#8B5CF6"
 		},
 		{
 			"title": "Open Source Contributor",
 			"description": "Active contributor to various open source projects on GitHub",
-			"icon": "🌟"
+			"icon": ["fas", "star"],
+			"color": "#FBBF24"
 		},
 		{
 			"title": "Linux Power User",
 			"description": "Advanced user of Arch Linux with deep system knowledge",
-			"icon": "🐧"
+			"icon": ["fab", "linux"],
+			"color": "#1793D1"
 		},
 		{
 			"title": "Problem Solver",
 			"description": "Passionate about solving complex technical challenges",
-			"icon": "🧩"
+			"icon": ["fas", "puzzle-piece"],
+			"color": "#10B981"
 		}
 	]
 }
