@@ -1,45 +1,57 @@
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div v-if="isOpen" @click="closeModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
-        <div @click.stop class="bg-gradient-to-br from-[#5865F2]/20 to-[#5865F2]/10 backdrop-blur-xl border border-[#5865F2]/30 rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl shadow-[#5865F2]/20">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold text-white flex items-center gap-2">
-              <font-awesome-icon :icon="['fab', 'discord']" class="text-[#5865F2]" />
-              Discord
-            </h3>
-            <button @click="closeModal" class="text-gray-400 hover:text-white transition">
-              <font-awesome-icon icon="times" class="w-6 h-6" />
-            </button>
-          </div>
-          
-          <div class="space-y-4">
-            <div class="bg-black/30 rounded-xl p-4 border border-white/10">
-              <p class="text-sm text-gray-400 mb-2">Username</p>
-              <div class="flex items-center justify-between">
-                <p class="text-xl font-mono text-white">{{ username }}</p>
-                <button @click="copyUsername" class="px-3 py-1 bg-[#5865F2]/20 hover:bg-[#5865F2]/30 text-[#5865F2] rounded-lg transition text-sm">
-                  {{ copied ? 'Copied!' : 'Copy' }}
-                </button>
-              </div>
-            </div>
-            
-            <a :href="profileUrl" target="_blank" rel="noopener"
-               class="block w-full py-3 bg-[#5865F2] hover:bg-[#5865F2]/90 text-white rounded-lg font-semibold text-center transition shadow-lg shadow-[#5865F2]/30">
-              Open Discord Profile
-            </a>
-          </div>
-        </div>
-      </div>
-    </Transition>
-  </Teleport>
+	<Teleport to="body">
+		<Transition name="modal">
+			<div
+				v-if="isOpen"
+				@click="closeModal"
+				class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+				<div
+					@click.stop
+					class="mx-4 w-full max-w-md rounded-2xl border border-[#5865F2]/30 bg-gradient-to-br from-[#5865F2]/20 to-[#5865F2]/10 p-8 shadow-2xl shadow-[#5865F2]/20 backdrop-blur-xl">
+					<div class="mb-6 flex items-center justify-between">
+						<h3 class="flex items-center gap-2 text-2xl font-bold text-white">
+							<font-awesome-icon :icon="['fab', 'discord']" class="text-[#5865F2]" />
+							Discord
+						</h3>
+						<button
+							@click="closeModal"
+							class="text-gray-400 transition hover:text-white">
+							<font-awesome-icon icon="times" class="h-6 w-6" />
+						</button>
+					</div>
+
+					<div class="space-y-4">
+						<div class="rounded-xl border border-white/10 bg-black/30 p-4">
+							<p class="mb-2 text-sm text-gray-400">Username</p>
+							<div class="flex items-center justify-between">
+								<p class="font-mono text-xl text-white">{{ username }}</p>
+								<button
+									@click="copyUsername"
+									class="rounded-lg bg-[#5865F2]/20 px-3 py-1 text-sm text-[#5865F2] transition hover:bg-[#5865F2]/30">
+									{{ copied ? 'Copied!' : 'Copy' }}
+								</button>
+							</div>
+						</div>
+
+						<a
+							:href="profileUrl"
+							target="_blank"
+							rel="noopener"
+							class="block w-full rounded-lg bg-[#5865F2] py-3 text-center font-semibold text-white shadow-lg shadow-[#5865F2]/30 transition hover:bg-[#5865F2]/90">
+							Open Discord Profile
+						</a>
+					</div>
+				</div>
+			</div>
+		</Transition>
+	</Teleport>
 </template>
 
 <script setup>
 const props = defineProps({
-  isOpen: Boolean,
-  username: String,
-  profileUrl: String
+	isOpen: Boolean,
+	username: String,
+	profileUrl: String,
 })
 
 const emit = defineEmits(['close'])
@@ -47,40 +59,40 @@ const emit = defineEmits(['close'])
 const copied = ref(false)
 
 const closeModal = () => {
-  emit('close')
+	emit('close')
 }
 
 const copyUsername = async () => {
-  try {
-    await navigator.clipboard.writeText(props.username)
-    copied.value = true
-    setTimeout(() => {
-      copied.value = false
-    }, 2000)
-  } catch (err) {
-    console.error('Failed to copy:', err)
-  }
+	try {
+		await navigator.clipboard.writeText(props.username)
+		copied.value = true
+		setTimeout(() => {
+			copied.value = false
+		}, 2000)
+	} catch (err) {
+		console.error('Failed to copy:', err)
+	}
 }
 </script>
 
 <style scoped>
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.3s ease;
+	transition: opacity 0.3s ease;
 }
 
 .modal-enter-from,
 .modal-leave-to {
-  opacity: 0;
+	opacity: 0;
 }
 
 .modal-enter-active > div,
 .modal-leave-active > div {
-  transition: transform 0.3s ease;
+	transition: transform 0.3s ease;
 }
 
 .modal-enter-from > div,
 .modal-leave-to > div {
-  transform: scale(0.9);
+	transform: scale(0.9);
 }
 </style>
