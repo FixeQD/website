@@ -5,7 +5,7 @@
     "title": "Full Stack Developer & Linux Enthusiast",
     "tagline": "Crafting Digital Experiences with Code",
     "description": "Passionate full-stack developer specializing in modern web technologies, mobile development, and creating innovative digital solutions. I love working with cutting-edge frameworks and building applications that make a difference. My expertise spans from frontend technologies like JavaScript and CSS to backend systems and mobile app development.",
-    "avatar": "assets/avatar.jpg",
+    "avatar": "/avatar.jpg",
     "location": "Poland • Arch Linux Enthusiast",
     "experience": "3+ Years",
     "projectsCompleted": "25+",

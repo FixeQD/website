@@ -23,7 +23,10 @@ export default defineNuxtConfig({
     }
   },
 
+  css: [
+    '@fortawesome/fontawesome-svg-core/styles.css'
+  ],
+
   // Generate static site for GitHub Pages
-  ssr: false,
-  target: 'static'
+  ssr: false
 })
