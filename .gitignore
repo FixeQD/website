@@ -1,5 +1,12 @@
 # FixeQ Portfolio - Git Ignore Rules
 
+# Nuxt
+.nuxt
+.output
+dist
+node_modules
+.env
+
 # Development files
 .vscode/
 .idea/
