@@ -46,6 +46,9 @@ import {
 	faCubes,
 	faBullseye,
 	faLeaf,
+	faScaleBalanced,
+	faCheck,
+	faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons'
 import { defineNuxtPlugin } from 'nuxt/app'
 
@@ -96,7 +99,10 @@ library.add(
 	faDatabase,
 	faCubes,
 	faBullseye,
-	faLeaf
+	faLeaf,
+	faScaleBalanced,
+	faCheck,
+	faInfoCircle
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

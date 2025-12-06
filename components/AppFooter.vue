@@ -49,26 +49,43 @@
 				:profileUrl="discordProfileUrl"
 				@close="showDiscordModal = false" />
 
+			<!-- License Modal -->
+			<LicenseModal
+				:isOpen="showLicenseModal"
+				:ownerName="data?.developer?.name"
+				@close="showLicenseModal = false" />
+
 			<div class="border-t border-white/10 pt-8">
-				<p class="mb-2 text-sm text-gray-500">&copy; 2024 {{ data?.developer?.name }}</p>
-				<p class="text-xs text-gray-600">
+				<p class="mb-2 text-sm text-gray-500">
+					&copy; {{ currentYear }} {{ data?.developer?.name }}
+				</p>
+				<p class="mb-2 text-xs text-gray-600">
 					Built with 💙 using <span class="text-primary">Nuxt 3</span>,
 					<span class="text-secondary">Tailwind CSS</span> &
 					<span class="text-primary">Three.js</span>
 				</p>
+				<button
+					@click="showLicenseModal = true"
+					class="inline-flex items-center gap-2 text-xs text-gray-500 transition hover:text-primary">
+					<font-awesome-icon icon="scale-balanced" class="h-3 w-3" />
+					MIT License
+				</button>
 			</div>
 		</div>
 	</footer>
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
 	data: Object,
 })
+
+const currentYear = new Date().getFullYear()
 
 const showDiscordModal = ref(false)
 const discordUsername = ref('')
 const discordProfileUrl = ref('')
+const showLicenseModal = ref(false)
 
 const openDiscordModal = (social) => {
 	discordUsername.value = social.username || 'fixeq.dev'
