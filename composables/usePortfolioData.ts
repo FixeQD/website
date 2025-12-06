@@ -1,14 +1,12 @@
+import portfolioData from '~/assets/data.json'
+import projectsData from '~/assets/projects.json'
+
 export const usePortfolioData = () => {
-  const data = useState('portfolioData', () => null)
-  const projects = useState('projects', () => null)
+  const data = useState('portfolioData', () => portfolioData)
+  const projects = useState('projects', () => projectsData)
 
   const fetchData = async () => {
-    if (!data.value) {
-      data.value = await $fetch('/data.json')
-    }
-    if (!projects.value) {
-      projects.value = await $fetch('/projects.json')
-    }
+    // Data is already loaded via import
   }
 
   return {
