@@ -101,6 +101,12 @@ onMounted(() => {
   }
   
   animate()
+  
+  // Cleanup
+  onUnmounted(() => {
+    window.removeEventListener('mousemove', onMouseMove)
+    window.removeEventListener('resize', onResize)
+  })
 })
 
 onUnmounted(() => {

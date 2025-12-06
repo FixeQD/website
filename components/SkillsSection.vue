@@ -54,6 +54,7 @@ const props = defineProps({
 
 const inView = ref(false)
 const displayedLevels = ref({})
+const timers = ref([])
 
 const getCategoryIcon = (category) => {
   const icons = {
@@ -87,6 +88,12 @@ onMounted(() => {
   if (section) observer.observe(section)
 })
 
+onUnmounted(() => {
+  // Clean up all timers
+  timers.value.forEach(timer => clearInterval(timer))
+  timers.value = []
+})
+
 const animateLevels = () => {
   if (!props.data?.skills) return
   
@@ -102,10 +109,13 @@ const animateLevels = () => {
         if (current >= target) {
           displayedLevels.value[key] = target
           clearInterval(timer)
+          timers.value = timers.value.filter(t => t !== timer)
         } else {
           displayedLevels.value[key] = Math.floor(current)
         }
       }, 20)
+      
+      timers.value.push(timer)
     })
   })
 }
