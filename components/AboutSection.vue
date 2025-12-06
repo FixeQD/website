@@ -22,7 +22,7 @@
             <div v-for="(stat, idx) in stats" :key="stat.label" 
                  class="text-center p-6 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 hover:border-primary/50 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/20 group/stat"
                  :style="{ animationDelay: `${idx * 100}ms` }">
-              <div class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-3 group-hover/stat:scale-110 transition-transform">
+              <div :class="stat.label === 'Location' ? 'text-4xl md:text-5xl font-bold text-white mb-3 group-hover/stat:scale-110 transition-transform' : 'text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-3 group-hover/stat:scale-110 transition-transform'">
                 {{ stat.value }}
               </div>
               <div class="text-sm md:text-base text-gray-400 group-hover/stat:text-gray-300 transition-colors">{{ stat.label }}</div>
