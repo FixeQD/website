@@ -5,7 +5,7 @@
     "title": "Full Stack Developer & Linux Enthusiast",
     "tagline": "Crafting Digital Experiences with Code",
     "description": "Passionate full-stack developer specializing in modern web technologies, mobile development, and creating innovative digital solutions. I love working with cutting-edge frameworks and building applications that make a difference. My expertise spans from frontend technologies like JavaScript and CSS to backend systems and mobile app development.",
-    "avatar": "assets/avatar.jpg",
+    "avatar": "/avatar.jpg",
     "location": "Poland • Arch Linux Enthusiast",
     "experience": "3+ Years",
     "projectsCompleted": "25+",
@@ -143,11 +143,12 @@
       "description": "Check out my open source projects and contributions"
     },
     {
-      "name": "Threads",
-      "url": "https://threads.com/@fixeq.dev",
-      "icon": "threads",
-      "color": "#FF0080",
-      "description": "Follow me for tech updates and insights"
+      "name": "Discord",
+      "url": "https://discord.com/users/853621876551188490",
+      "icon": "discord",
+      "color": "#5865F2",
+      "username": "fixeq.dev",
+      "description": "Connect with me on Discord"
     },
     {
       "name": "Instagram",
