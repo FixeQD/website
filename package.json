@@ -1,12 +1,21 @@
 {
-  "name": "fixeqyt.github.io",
-  "module": "index.ts",
-  "type": "module",
+  "name": "fixeq-portfolio",
+  "version": "1.0.0",
   "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "dependencies": {
+    "nuxt": "^3.15.1",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.12.2",
+    "@nuxt/icon": "^1.10.0"
   }
 }
