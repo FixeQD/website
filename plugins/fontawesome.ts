@@ -6,6 +6,17 @@ import {
 	faDiscord,
 	faLinkedin,
 	faTwitter,
+	faJs,
+	faHtml5,
+	faCss3Alt,
+	faReact,
+	faNodeJs,
+	faPython,
+	faJava,
+	faDocker,
+	faLinux,
+	faGitAlt,
+	faAndroid,
 } from '@fortawesome/free-brands-svg-icons'
 import {
 	faArrowUp,
@@ -30,7 +41,13 @@ import {
 	faTrophy,
 	faPuzzlePiece,
 	faChartLine,
+	faGlobe,
+	faDatabase,
+	faCubes,
+	faBullseye,
+	faLeaf,
 } from '@fortawesome/free-solid-svg-icons'
+import { defineNuxtPlugin } from 'nuxt/app'
 
 // This is important, we are going to let Nuxt worry about the CSS
 config.autoAddCss = false
@@ -42,6 +59,17 @@ library.add(
 	faDiscord,
 	faLinkedin,
 	faTwitter,
+	faJs,
+	faHtml5,
+	faCss3Alt,
+	faReact,
+	faNodeJs,
+	faPython,
+	faJava,
+	faDocker,
+	faLinux,
+	faGitAlt,
+	faAndroid,
 	faArrowUp,
 	faCode,
 	faMobileAlt,
@@ -63,7 +91,12 @@ library.add(
 	faGraduationCap,
 	faTrophy,
 	faPuzzlePiece,
-	faChartLine
+	faChartLine,
+	faGlobe,
+	faDatabase,
+	faCubes,
+	faBullseye,
+	faLeaf
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -25,13 +25,12 @@
 					<div class="mb-6 flex items-center gap-3">
 						<div
 							class="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-secondary text-2xl shadow-lg">
-							{{ getCategoryIcon(category.category) }}
+							<font-awesome-icon :icon="category.icon" class="text-white" />
 						</div>
 						<h3 class="text-2xl font-bold transition-colors group-hover:text-primary">
 							{{ category.category }}
 						</h3>
 					</div>
-
 					<div class="space-y-5">
 						<div
 							v-for="tech in category.technologies"
@@ -40,7 +39,10 @@
 							<div class="mb-2 flex justify-between">
 								<span
 									class="flex items-center gap-2 text-gray-300 transition-colors group-hover/tech:text-white">
-									<span class="text-xl">{{ tech.icon }}</span>
+									<font-awesome-icon
+										:icon="tech.icon"
+										class="text-xl"
+										:style="{ color: tech.color }" />
 									<span class="font-medium">{{ tech.name }}</span>
 								</span>
 							</div>
@@ -72,16 +74,6 @@ const props = defineProps({
 const inView = ref(false)
 const displayedLevels = ref({})
 const timers = ref([])
-
-const getCategoryIcon = (category) => {
-	const icons = {
-		'Frontend Development': '🎨',
-		'Backend Development': '⚙️',
-		'Mobile Development': '📱',
-		'Tools & DevOps': '🛠️',
-	}
-	return icons[category] || '💻'
-}
 
 const adjustColor = (color, amount) => {
 	const num = parseInt(color.replace('#', ''), 16)
