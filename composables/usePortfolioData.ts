@@ -1,5 +1,6 @@
-import portfolioData from '~/assets/data.json'
-import projectsData from '~/assets/projects.json'
+import { useState } from 'nuxt/app'
+import portfolioData from '../assets/data.json'
+import projectsData from '../assets/projects.json'
 
 export const usePortfolioData = () => {
 	const data = useState('portfolioData', () => portfolioData)
