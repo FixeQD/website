@@ -29,8 +29,9 @@
 				<div
 					v-for="(project, idx) in projects?.projects"
 					:key="project.id"
-					class="group rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 transition-all duration-300 hover:scale-105 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20"
-					:style="{ animationDelay: `${idx * 100}ms` }">
+					class="group cursor-pointer rounded-2xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 transition-all duration-300 hover:scale-105 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20"
+					:style="{ animationDelay: `${idx * 100}ms` }"
+					@click="openModal(project)">
 					<div
 						class="mb-4 h-40 overflow-hidden rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20">
 						<div
@@ -52,12 +53,42 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- Modal -->
+			<!-- <div
+				v-if="showModal"
+				class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-md"
+				@click="closeModal">
+				<div class="relative" @click.stop>
+					<button
+						@click="closeModal"
+						class="absolute -right-12 -top-12 z-10 text-3xl text-white hover:text-gray-300">
+						&times;
+					</button>
+					<!-- <MobileAppViewer :src="selectedProject?.demoUrl" width="428px" height="926px" />
+				</div>
+			</div> -->
 		</div>
 	</section>
 </template>
 
 <script setup>
+import MobileAppViewer from './MobileAppViewer.vue'
+
 const props = defineProps({
 	projects: Object,
 })
+
+const showModal = ref(false)
+const selectedProject = ref(null)
+
+const openModal = (project) => {
+	selectedProject.value = project
+	showModal.value = true
+}
+
+const closeModal = () => {
+	showModal.value = false
+	selectedProject.value = null
+}
 </script>
