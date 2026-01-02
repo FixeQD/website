@@ -17,6 +17,7 @@ import {
 	faLinux,
 	faGitAlt,
 	faAndroid,
+	faVuejs,
 } from '@fortawesome/free-brands-svg-icons'
 import {
 	faArrowUp,
@@ -73,6 +74,7 @@ library.add(
 	faLinux,
 	faGitAlt,
 	faAndroid,
+	faVuejs,
 	faArrowUp,
 	faCode,
 	faMobileAlt,

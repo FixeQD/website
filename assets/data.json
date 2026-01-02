@@ -45,6 +45,11 @@
 					"name": "TypeScript",
 					"icon": ["fas", "code"],
 					"color": "#3178C6"
+				},
+				{
+					"name": "Vue.js",
+					"icon": ["fab", "vuejs"],
+					"color": "#42B883"
 				}
 			]
 		},
