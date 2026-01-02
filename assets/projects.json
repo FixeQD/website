@@ -1,17 +1,27 @@
 {
-	"underConstruction": true,
+	"underConstruction": false,
 	"constructionMessage": "Projects section is currently under development. New exciting projects coming soon!",
-	"projects": [],
+	"projects": [
+		{
+			"id": "spicetify-cat-jam",
+			"title": "Cat-Jam Synced (Reborn) for Spicetify",
+			"description": "A reborn and optimized Cat-Jam experience, perfectly in sync with your beat.",
+			"category": "frontend",
+			"technologies": ["TypeScript", "React"],
+			"demoUrl": null,
+			"githubUrl": "https://github.com/FixeQD/spicetify-cat-jam-synced-reborn"
+		}
+	],
 	"categories": [
 		{
 			"name": "all",
 			"label": "All Projects",
-			"count": 0
+			"count": 1
 		},
 		{
 			"name": "frontend",
 			"label": "Frontend",
-			"count": 0
+			"count": 1
 		},
 		{
 			"name": "full-stack",
@@ -25,9 +35,9 @@
 		}
 	],
 	"stats": {
-		"totalProjects": 0,
-		"completedProjects": 0,
+		"totalProjects": 1,
+		"completedProjects": 1,
 		"inProgressProjects": 0,
-		"technologies": []
+		"technologies": ["TypeScript", "React"]
 	}
 }

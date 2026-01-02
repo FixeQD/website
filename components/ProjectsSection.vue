@@ -68,12 +68,16 @@
 					<!-- <MobileAppViewer :src="selectedProject?.demoUrl" width="428px" height="926px" />
 				</div>
 			</div> -->
+			<ProjectModal
+				:show="showModal"
+				:project="selectedProject"
+				@close="closeModal" />
 		</div>
 	</section>
 </template>
 
 <script setup>
-import MobileAppViewer from './MobileAppViewer.vue'
+import ProjectModal from './popup/ProjectModal.vue'
 
 const props = defineProps({
 	projects: Object,
@@ -92,3 +96,5 @@ const closeModal = () => {
 	selectedProject.value = null
 }
 </script>
+
+<style scoped></style>

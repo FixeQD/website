@@ -94,6 +94,8 @@
 </template>
 
 <script setup>
+import DiscordModal from './popup/DiscordModal.vue'
+
 const props = defineProps({
 	data: Object,
 })

@@ -76,6 +76,9 @@
 </template>
 
 <script setup>
+import DiscordModal from './popup/DiscordModal.vue'
+import LicenseModal from './popup/LicenseModal.vue'
+
 defineProps({
 	data: Object,
 })

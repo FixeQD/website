@@ -88,7 +88,7 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
 	isOpen: Boolean,
 	ownerName: String,
 })
@@ -96,6 +96,8 @@ defineProps({
 const emit = defineEmits(['close'])
 
 const currentYear = new Date().getFullYear()
+
+useModalOpen(toRef(props, 'isOpen'))
 
 const licenseText = computed(
 	() => `MIT License

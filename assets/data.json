@@ -22,7 +22,7 @@
 			"icon": ["fas", "palette"],
 			"technologies": [
 				{
-					"name": "JavaScript ES6+",
+					"name": "JavaScript",
 					"icon": ["fab", "js"],
 					"color": "#F7DF1E"
 				},
@@ -76,6 +76,11 @@
 					"name": "MongoDB",
 					"icon": ["fas", "leaf"],
 					"color": "#47A248"
+				},
+				{
+					"name": "TypeScript",
+					"icon": ["fas", "code"],
+					"color": "#3178C6"
 				}
 			]
 		},

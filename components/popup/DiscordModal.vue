@@ -58,6 +58,8 @@ const emit = defineEmits(['close'])
 
 const copied = ref(false)
 
+useModalOpen(toRef(props, 'isOpen'))
+
 const closeModal = () => {
 	emit('close')
 }
