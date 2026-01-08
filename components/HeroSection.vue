@@ -1,100 +1,205 @@
 <template>
-	<section
-		id="home"
-		class="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
-		<!-- Animated gradient background -->
+	<section id="home" class="relative flex min-h-screen items-center overflow-hidden">
 		<div
-			class="animate-pulse-slow absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5"></div>
+			class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
 
-		<!-- Code symbols and geometric shapes floating -->
-		<div class="pointer-events-none absolute inset-0 overflow-hidden opacity-30">
+		<div class="container relative z-10 mx-auto grid gap-8 px-6 lg:grid-cols-2 lg:gap-12">
+			<!-- Left side - Text content -->
+			<div class="flex flex-col justify-center">
+				<!-- Typewriter -->
+				<div class="mb-6 flex h-8 items-center text-lg text-gray-400 md:text-xl">
+					<span
+						ref="typewriterRef"
+						class="typewriter border-r-2 border-primary pr-1 text-primary"
+						>{{ typewriterText }}</span
+					>
+				</div>
+
+				<!-- Just the tagline -->
+				<h1
+					class="mb-8 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
+					Crafting
+					<span
+						class="bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent">
+						Digital
+					</span>
+					Experiences
+					<br />
+					<span class="text-gray-400">with</span>
+					<span
+						class="bg-gradient-to-r from-secondary to-pink-400 bg-clip-text text-transparent">
+						Code
+					</span>
+				</h1>
+
+				<!-- Single CTA -->
+				<div class="flex items-center gap-6">
+					<a
+						href="#projects"
+						class="group inline-flex items-center gap-3 rounded-full border border-primary bg-primary/10 px-6 py-3 font-medium text-primary transition-all duration-300 hover:bg-primary hover:text-dark">
+						<span>See my work</span>
+						<font-awesome-icon
+							icon="arrow-right"
+							class="transition-transform group-hover:translate-x-1" />
+					</a>
+
+					<!-- Social links inline -->
+					<div class="flex gap-3">
+						<component
+							v-for="social in data?.socials"
+							:key="social.name"
+							:is="social.name === 'Discord' ? 'button' : 'a'"
+							:href="social.name !== 'Discord' ? social.url : undefined"
+							:target="social.name !== 'Discord' ? '_blank' : undefined"
+							:rel="social.name !== 'Discord' ? 'noopener' : undefined"
+							@click="social.name === 'Discord' ? openDiscordModal(social) : null"
+							class="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-gray-400 transition-all duration-300 hover:border-primary hover:text-primary">
+							<font-awesome-icon :icon="['fab', social.icon]" class="h-4 w-4" />
+						</component>
+					</div>
+				</div>
+			</div>
+
+			<!-- Right side -->
 			<div
-				v-for="(symbol, i) in codeSymbols"
-				:key="i"
-				class="animate-float absolute font-mono text-2xl text-primary/40 md:text-4xl"
-				:style="{
-					left: `${Math.random() * 100}%`,
-					top: `${Math.random() * 100}%`,
-					animationDelay: `${Math.random() * 5}s`,
-					animationDuration: `${Math.random() * 15 + 10}s`,
-				}">
-				{{ symbol }}
+				ref="orbitContainer"
+				class="relative hidden h-[450px] lg:flex lg:items-center lg:justify-center">
+				<!-- Orbital rings -->
+				<div
+					class="absolute h-[350px] w-[350px] animate-[spin_80s_linear_infinite] rounded-full border border-white/5"></div>
+				<div
+					class="absolute h-[250px] w-[250px] animate-[spin_60s_linear_infinite_reverse] rounded-full border border-white/10"></div>
+
+				<!-- Center glow -->
+				<div class="absolute h-20 w-20 rounded-full bg-primary/20 blur-2xl"></div>
+
+				<!-- Skill icons -->
+				<div
+					v-for="(skill, index) in floatingSkills"
+					:key="skill.name"
+					class="skill-icon group absolute"
+					:style="getIconStyle(Number(index))"
+					@mouseenter="setHovered(Number(index))"
+					@mouseleave="setHovered(null)">
+					<!-- Glow effect - not hovered -->
+					<div
+						class="absolute inset-0 rounded-full blur-xl transition-all duration-500 group-hover:scale-150 group-hover:opacity-0"
+						:style="{ background: skill.color, opacity: 0.4 }"></div>
+
+					<!-- Card container -->
+					<div
+						class="skill-card relative flex cursor-pointer items-center gap-2 transition-all duration-500 ease-out"
+						:class="[
+							'group-hover:rounded-xl group-hover:border group-hover:border-white/20 group-hover:bg-dark/95 group-hover:p-2.5 group-hover:backdrop-blur-md',
+							'rounded-full p-1',
+						]"
+						:style="{ flexDirection: getExpandDirection(Number(index)) }">
+						<!-- Hover glow -->
+						<div
+							class="absolute inset-0 scale-0 rounded-xl opacity-0 blur-lg transition-all duration-500 group-hover:scale-110 group-hover:opacity-60"
+							:style="{ background: skill.color }"></div>
+
+						<!-- Icon -->
+						<div
+							class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-all duration-500"
+							:style="{ background: `${skill.color}20` }">
+							<font-awesome-icon
+								:icon="skill.icon"
+								class="text-lg transition-all duration-300 group-hover:scale-110"
+								:style="{ color: skill.color }" />
+						</div>
+
+						<!-- Skill name -->
+						<span
+							class="skill-name relative max-w-0 overflow-hidden whitespace-nowrap text-sm font-medium text-white opacity-0 transition-all duration-500 ease-out group-hover:max-w-[120px] group-hover:opacity-100"
+							:style="{
+								[getExpandDirection(Number(index)) === 'row'
+									? 'paddingRight'
+									: 'paddingLeft']: '0.5rem',
+							}">
+							{{ skill.name }}
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Mobile orbit playground -->
+			<div
+				ref="mobilePlaygroundRef"
+				class="relative mx-auto h-[220px] w-[220px] touch-none select-none lg:hidden">
+				<!-- Orbital rings -->
+				<div
+					class="absolute left-1/2 top-1/2 h-[170px] w-[170px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"></div>
+
+				<!-- Center glow -->
+				<div
+					class="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-xl transition-all duration-150"
+					:style="{
+						transform: `translate(-50%, -50%) scale(${1 + centerGlowIntensity * 2})`,
+						opacity: 0.3 + centerGlowIntensity * 0.7,
+					}"></div>
+
+				<!-- Spring line to center when dragging -->
+				<svg
+					v-if="draggedSkillIndex !== null"
+					class="pointer-events-none fixed inset-0 z-50 h-screen w-screen"
+					:style="{ left: 0, top: 0 }">
+					<line
+						:x1="springLineCenter.x"
+						:y1="springLineCenter.y"
+						:x2="springLineEnd.x"
+						:y2="springLineEnd.y"
+						:stroke="floatingSkills[draggedSkillIndex]?.color ?? '#00ff88'"
+						stroke-width="2"
+						stroke-dasharray="4 4"
+						:opacity="0.4 + getBodyGlowIntensity(draggedSkillIndex) * 0.4" />
+				</svg>
+
+				<!-- Skill bodies -->
+				<div
+					v-for="(skill, index) in floatingSkills"
+					:key="skill.name"
+					class="absolute cursor-grab rounded-full border border-white/20 bg-dark/95 backdrop-blur-sm active:cursor-grabbing"
+					:style="{
+						...getBodyStyle(Number(index)),
+						boxShadow:
+							getBodyGlowIntensity(Number(index)) > 0
+								? `0 0 ${20 * getBodyGlowIntensity(Number(index))}px ${skill.color}`
+								: 'none',
+					}">
+					<div
+						class="flex h-full w-full items-center justify-center rounded-full"
+						:style="{ background: `${skill.color}20` }">
+						<font-awesome-icon
+							:icon="skill.icon"
+							class="text-sm"
+							:style="{ color: skill.color }" />
+					</div>
+				</div>
 			</div>
 		</div>
 
-		<div class="relative z-10 space-y-6 px-6 text-center">
-			<!-- Avatar with glow effect -->
-			<div class="group relative mx-auto mb-8 h-40 w-40">
-				<div
-					class="absolute inset-0 animate-pulse rounded-full bg-gradient-to-r from-primary to-secondary opacity-50 blur-xl transition-opacity group-hover:opacity-75"></div>
-				<div
-					class="relative h-full w-full overflow-hidden rounded-full border-4 border-primary shadow-2xl shadow-primary/50">
-					<img
-						:src="data?.developer?.avatar || '/avatar.jpg'"
-						:alt="data?.developer?.name"
-						class="h-full w-full object-cover" />
-				</div>
-			</div>
+		<!-- Discord Modal -->
+		<DiscordModal
+			:isOpen="showDiscordModal"
+			:username="discordUsername"
+			:profileUrl="discordProfileUrl"
+			@close="showDiscordModal = false" />
 
-			<!-- Glitch effect title -->
-			<h1 class="relative font-display text-6xl font-bold md:text-8xl">
-				<span class="glitch-text text-primary" data-text="FixeQ">
-					{{ data?.developer?.nickname || 'FixeQ' }}
-				</span>
-			</h1>
-
-			<!-- Typewriter subtitle -->
-			<div class="flex h-12 items-center justify-center text-2xl text-gray-300 md:text-3xl">
-				<span ref="typewriterRef" class="typewriter border-r-2 border-primary pr-1">{{
-					typewriterText
-				}}</span>
-			</div>
-
-			<p class="mx-auto max-w-2xl text-lg text-gray-400 md:text-xl">
-				{{ data?.developer?.tagline }}
-			</p>
-
-			<!-- Social links with hover effects -->
-			<div class="flex justify-center gap-4 pt-8">
-				<component
-					v-for="social in data?.socials"
-					:key="social.name"
-					:is="social.name === 'Discord' ? 'button' : 'a'"
-					:href="social.name !== 'Discord' ? social.url : undefined"
-					:target="social.name !== 'Discord' ? '_blank' : undefined"
-					:rel="social.name !== 'Discord' ? 'noopener' : undefined"
-					@click="social.name === 'Discord' ? openDiscordModal(social) : null"
-					class="group relative flex h-14 w-14 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-all duration-300 hover:scale-110 hover:border-primary hover:bg-white/10"
-					:style="{ '--hover-color': social.color }">
-					<div
-						class="absolute inset-0 rounded-full bg-gradient-to-r opacity-0 blur transition-opacity group-hover:opacity-20"
-						:style="{ background: social.color }"></div>
-					<font-awesome-icon
-						:icon="['fab', social.icon]"
-						class="relative z-10 h-6 w-6 transition-transform group-hover:scale-110" />
-				</component>
-			</div>
-
-			<!-- Discord Modal -->
-			<DiscordModal
-				:isOpen="showDiscordModal"
-				:username="discordUsername"
-				:profileUrl="discordProfileUrl"
-				@close="showDiscordModal = false" />
-
-			<!-- Scroll indicator -->
-			<div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-				<div
-					class="flex h-10 w-6 items-start justify-center rounded-full border-2 border-white/20 p-2">
-					<div class="animate-scroll h-2 w-1 rounded-full bg-primary"></div>
-				</div>
+		<div class="absolute bottom-8 left-1/2 -translate-x-1/2">
+			<div
+				class="flex h-8 w-5 items-start justify-center rounded-full border border-white/20 p-1.5">
+				<div class="animate-scroll h-1.5 w-1 rounded-full bg-primary"></div>
 			</div>
 		</div>
 	</section>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
 import DiscordModal from './popup/DiscordModal.vue'
+import { useSkillOrbit } from '../composables/useSkillOrbit'
+import { useMobileSkillPhysics } from '../composables/useMobileSkillPhysics'
 
 const props = defineProps({
 	data: Object,
@@ -105,8 +210,7 @@ const typewriterText = ref('')
 const showDiscordModal = ref(false)
 const discordUsername = ref('')
 const discordProfileUrl = ref('')
-
-const codeSymbols = ['{ }', '< >', '[ ]', '( )', '/>', '=>', '...', '&&', '||', '??', '</>']
+const mobilePlaygroundRef = ref<HTMLElement | null>(null)
 
 const texts = ['Full Stack Developer', 'Linux Enthusiast', 'Mobile Developer', 'Problem Solver']
 
@@ -114,7 +218,43 @@ let textIndex = 0
 let charIndex = 0
 let isDeleting = false
 
-const openDiscordModal = (social) => {
+const floatingSkills = computed(() => {
+	if (!props.data?.skills) return []
+	return props.data.skills.flatMap((cat: any) => cat.technologies).slice(0, 10)
+})
+
+const { setHovered, getIconStyle, getExpandDirection } = useSkillOrbit(floatingSkills)
+const { bodies, centerGlowIntensity, getBodyStyle, getBodyGlowIntensity } = useMobileSkillPhysics(
+	floatingSkills,
+	mobilePlaygroundRef
+)
+
+const draggedSkillIndex = computed(() => {
+	const idx = bodies.value.findIndex((b) => b.isDragging)
+	return idx >= 0 ? idx : null
+})
+
+// calc screen coords for spring line
+const springLineCenter = computed(() => {
+	if (!mobilePlaygroundRef.value) return { x: 0, y: 0 }
+	const rect = mobilePlaygroundRef.value.getBoundingClientRect()
+	return {
+		x: rect.left + rect.width / 2,
+		y: rect.top + rect.height / 2,
+	}
+})
+
+const springLineEnd = computed(() => {
+	if (draggedSkillIndex.value === null || !mobilePlaygroundRef.value) return { x: 0, y: 0 }
+	const rect = mobilePlaygroundRef.value.getBoundingClientRect()
+	const body = bodies.value[draggedSkillIndex.value]
+	return {
+		x: rect.left + (body?.x ?? 0),
+		y: rect.top + (body?.y ?? 0),
+	}
+})
+
+const openDiscordModal = (social: any) => {
 	discordUsername.value = social.username || 'fixeq.dev'
 	discordProfileUrl.value = social.url
 	showDiscordModal.value = true
@@ -151,93 +291,30 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.glitch-text {
-	position: relative;
-	display: inline-block;
-	animation: glitch 3s infinite;
+.skill-icon {
+	left: 50%;
+	top: 50%;
+	z-index: 1;
+	transition:
+		transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+		z-index 0s;
 }
 
-.glitch-text::before,
-.glitch-text::after {
-	content: attr(data-text);
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
+.skill-icon:hover {
+	z-index: 10;
 }
 
-.glitch-text::before {
-	animation: glitch-1 2s infinite;
-	clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-	transform: translate(-2px, -2px);
+.skill-card {
+	transition:
+		transform 0.3s ease,
+		border-color 0.3s ease,
+		background-color 0.3s ease;
 }
 
-.glitch-text::after {
-	animation: glitch-2 2s infinite;
-	clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-	transform: translate(2px, 2px);
-}
-
-@keyframes glitch {
-	0%,
-	100% {
-		transform: translate(0);
-	}
-	20% {
-		transform: translate(-2px, 2px);
-	}
-	40% {
-		transform: translate(-2px, -2px);
-	}
-	60% {
-		transform: translate(2px, 2px);
-	}
-	80% {
-		transform: translate(2px, -2px);
-	}
-}
-
-@keyframes glitch-1 {
-	0%,
-	100% {
-		clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-	}
-	25% {
-		clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
-	}
-	50% {
-		clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-	}
-	75% {
-		clip-path: polygon(0 45%, 100% 45%, 100% 80%, 0 80%);
-	}
-}
-
-@keyframes glitch-2 {
-	0%,
-	100% {
-		clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-	}
-	25% {
-		clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
-	}
-	50% {
-		clip-path: polygon(0 70%, 100% 70%, 100% 100%, 0 100%);
-	}
-	75% {
-		clip-path: polygon(0 20%, 100% 20%, 100% 65%, 0 65%);
-	}
-}
-
-@keyframes float {
-	0%,
-	100% {
-		transform: translate(0, 0) scale(1);
-	}
-	50% {
-		transform: translate(var(--tw-translate-x, 50px), var(--tw-translate-y, 50px)) scale(1.1);
-	}
+.skill-card:hover {
+	transform: scale(1.08);
+	border-color: rgba(255, 255, 255, 0.25);
+	background-color: rgba(10, 10, 15, 1);
 }
 
 @keyframes scroll {
@@ -246,24 +323,16 @@ onMounted(() => {
 		opacity: 1;
 	}
 	100% {
-		transform: translateY(8px);
+		transform: translateY(6px);
 		opacity: 0;
 	}
-}
-
-.animate-float {
-	animation: float 20s ease-in-out infinite;
 }
 
 .animate-scroll {
 	animation: scroll 1.5s ease-in-out infinite;
 }
 
-.animate-pulse-slow {
-	animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
 .typewriter {
-	font-family: 'Courier New', monospace;
+	font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 </style>

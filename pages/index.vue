@@ -8,7 +8,6 @@
 		<main>
 			<HeroSection :data="data" />
 			<AboutSection :data="data" />
-			<SkillsSection :data="data" />
 			<ProjectsSection :projects="projects" />
 		</main>
 

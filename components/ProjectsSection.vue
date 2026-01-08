@@ -68,10 +68,7 @@
 					<!-- <MobileAppViewer :src="selectedProject?.demoUrl" width="428px" height="926px" />
 				</div>
 			</div> -->
-			<ProjectModal
-				:show="showModal"
-				:project="selectedProject"
-				@close="closeModal" />
+			<ProjectModal :show="showModal" :project="selectedProject" @close="closeModal" />
 		</div>
 	</section>
 </template>
