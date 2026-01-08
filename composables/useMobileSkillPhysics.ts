@@ -20,14 +20,17 @@ interface SkillBody {
 }
 
 // cfg
-const ORBIT_RADIUS = 85
-const ICON_RADIUS = 20
+const ORBIT_RADIUS = 110
+const ICON_RADIUS = 26
 const SPRING = 0.08
 const FRICTION = 0.92
 const THROW_MULTIPLIER = 12
 const GLOW_DECAY = 0.95
 const MIN_VELOCITY = 0.1
 const COLLISION_PUSH = 0.5
+
+const FIXED_DT = 1 / 60
+const MAX_STEPS = 4
 
 export function useMobileSkillPhysics(
 	skills: ComputedRef<Skill[]> | Ref<Skill[]>,
@@ -37,6 +40,8 @@ export function useMobileSkillPhysics(
 	const centerGlowIntensity = ref(0)
 	let frameId: number | null = null
 	let containerCenter = { x: 0, y: 0 }
+	let accumulator = 0
+	let lastTs = 0
 
 	let dragIndex: number | null = null
 	let lastPointerPos = { x: 0, y: 0 }
@@ -168,13 +173,32 @@ export function useMobileSkillPhysics(
 		resolveCollisions()
 	}
 
-	const loop = () => {
-		physicsStep()
+	const loop = (ts: number) => {
+		if (lastTs === 0) lastTs = ts
+		const frameTime = Math.min((ts - lastTs) / 1000, 0.1) // cap at 100ms
+		lastTs = ts
+
+		accumulator += frameTime
+		let steps = 0
+
+		while (accumulator >= FIXED_DT && steps < MAX_STEPS) {
+			physicsStep()
+			accumulator -= FIXED_DT
+			steps++
+		}
+
+		// prevent spiral of death
+		if (accumulator > FIXED_DT * 2) {
+			accumulator = 0
+		}
+
 		frameId = requestAnimationFrame(loop)
 	}
 
 	const start = () => {
 		if (frameId === null) {
+			lastTs = 0
+			accumulator = 0
 			frameId = requestAnimationFrame(loop)
 		}
 	}

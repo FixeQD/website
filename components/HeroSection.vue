@@ -126,34 +126,42 @@
 			<!-- Mobile orbit playground -->
 			<div
 				ref="mobilePlaygroundRef"
-				class="relative mx-auto h-[220px] w-[220px] touch-none select-none lg:hidden">
+				class="relative mx-auto h-[280px] w-[280px] touch-none select-none lg:hidden">
 				<!-- Orbital rings -->
 				<div
-					class="absolute left-1/2 top-1/2 h-[170px] w-[170px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"></div>
+					class="absolute left-1/2 top-1/2 h-[220px] w-[220px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/5"></div>
+				<div
+					class="absolute left-1/2 top-1/2 h-[160px] w-[160px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"></div>
 
 				<!-- Center glow -->
 				<div
-					class="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-xl transition-all duration-150"
+					class="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full blur-xl transition-all duration-150"
 					:style="{
-						transform: `translate(-50%, -50%) scale(${1 + centerGlowIntensity * 2})`,
+						background:
+							draggedSkillIndex !== null
+								? floatingSkills[draggedSkillIndex]?.color
+								: 'rgb(0 255 136 / 0.2)',
+						transform: `translate(-50%, -50%) scale(${1 + centerGlowIntensity * 2.5})`,
 						opacity: 0.3 + centerGlowIntensity * 0.7,
 					}"></div>
 
 				<!-- Spring line to center when dragging -->
-				<svg
-					v-if="draggedSkillIndex !== null"
-					class="pointer-events-none fixed inset-0 z-50 h-screen w-screen"
-					:style="{ left: 0, top: 0 }">
-					<line
-						:x1="springLineCenter.x"
-						:y1="springLineCenter.y"
-						:x2="springLineEnd.x"
-						:y2="springLineEnd.y"
-						:stroke="floatingSkills[draggedSkillIndex]?.color ?? '#00ff88'"
-						stroke-width="2"
-						stroke-dasharray="4 4"
-						:opacity="0.4 + getBodyGlowIntensity(draggedSkillIndex) * 0.4" />
-				</svg>
+				<Teleport to="body">
+					<svg
+						v-if="draggedSkillIndex !== null"
+						class="pointer-events-none fixed inset-0 z-[9999] h-screen w-screen"
+						style="left: 0; top: 0">
+						<line
+							:x1="springLineCenter.x"
+							:y1="springLineCenter.y"
+							:x2="springLineEnd.x"
+							:y2="springLineEnd.y"
+							:stroke="floatingSkills[draggedSkillIndex]?.color ?? '#00ff88'"
+							stroke-width="3"
+							stroke-dasharray="6 6"
+							:opacity="0.5 + getBodyGlowIntensity(draggedSkillIndex) * 0.5" />
+					</svg>
+				</Teleport>
 
 				<!-- Skill bodies -->
 				<div
@@ -164,7 +172,7 @@
 						...getBodyStyle(Number(index)),
 						boxShadow:
 							getBodyGlowIntensity(Number(index)) > 0
-								? `0 0 ${20 * getBodyGlowIntensity(Number(index))}px ${skill.color}`
+								? `0 0 ${25 * getBodyGlowIntensity(Number(index))}px ${skill.color}`
 								: 'none',
 					}">
 					<div
@@ -172,8 +180,21 @@
 						:style="{ background: `${skill.color}20` }">
 						<font-awesome-icon
 							:icon="skill.icon"
-							class="text-sm"
+							class="text-base"
 							:style="{ color: skill.color }" />
+					</div>
+
+					<!-- Floating label when dragging -->
+					<div
+						v-if="draggedSkillIndex === Number(index)"
+						class="absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium"
+						:style="{
+							background: `${skill.color}20`,
+							color: skill.color,
+							border: `1px solid ${skill.color}40`,
+							boxShadow: `0 0 12px ${skill.color}30`,
+						}">
+						{{ skill.name }}
 					</div>
 				</div>
 			</div>
@@ -196,7 +217,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import DiscordModal from './popup/DiscordModal.vue'
 import { useSkillOrbit } from '../composables/useSkillOrbit'
 import { useMobileSkillPhysics } from '../composables/useMobileSkillPhysics'
@@ -234,24 +255,36 @@ const draggedSkillIndex = computed(() => {
 	return idx >= 0 ? idx : null
 })
 
-// calc screen coords for spring line
-const springLineCenter = computed(() => {
-	if (!mobilePlaygroundRef.value) return { x: 0, y: 0 }
-	const rect = mobilePlaygroundRef.value.getBoundingClientRect()
-	return {
-		x: rect.left + rect.width / 2,
-		y: rect.top + rect.height / 2,
+const springLineCenter = ref({ x: 0, y: 0 })
+const springLineEnd = ref({ x: 0, y: 0 })
+
+let springLineFrame: number | null = null
+
+const updateSpringLine = () => {
+	if (mobilePlaygroundRef.value) {
+		const rect = mobilePlaygroundRef.value.getBoundingClientRect()
+		springLineCenter.value = {
+			x: rect.left + rect.width / 2,
+			y: rect.top + rect.height / 2,
+		}
+
+		if (draggedSkillIndex.value !== null) {
+			const body = bodies.value[draggedSkillIndex.value]
+			springLineEnd.value = {
+				x: rect.left + (body?.x ?? 0),
+				y: rect.top + (body?.y ?? 0),
+			}
+		}
 	}
+	springLineFrame = requestAnimationFrame(updateSpringLine)
+}
+
+onMounted(() => {
+	springLineFrame = requestAnimationFrame(updateSpringLine)
 })
 
-const springLineEnd = computed(() => {
-	if (draggedSkillIndex.value === null || !mobilePlaygroundRef.value) return { x: 0, y: 0 }
-	const rect = mobilePlaygroundRef.value.getBoundingClientRect()
-	const body = bodies.value[draggedSkillIndex.value]
-	return {
-		x: rect.left + (body?.x ?? 0),
-		y: rect.top + (body?.y ?? 0),
-	}
+onUnmounted(() => {
+	if (springLineFrame) cancelAnimationFrame(springLineFrame)
 })
 
 const openDiscordModal = (social: any) => {
