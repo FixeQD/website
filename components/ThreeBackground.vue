@@ -10,6 +10,10 @@ const canvasRef = ref(null)
 let renderer, animationId
 let mouseX = 0,
 	mouseY = 0
+let scrollY = 0,
+	targetScrollY = 0
+let lookTargetX = 0,
+	lookTargetY = 0
 
 onMounted(() => {
 	if (!canvasRef.value) return
@@ -28,6 +32,7 @@ onMounted(() => {
 	const MAX_LINES = 300
 	const BOUNDS_X = 900
 	const BOUNDS_Y = 550
+	const BOUNDS_Z = 600
 	const REPEL_RADIUS = 200
 	const REPEL_R2 = REPEL_RADIUS * REPEL_RADIUS
 	const HIGHLIGHT_R = 250
@@ -41,7 +46,7 @@ onMounted(() => {
 	for (let i = 0; i < NODE_COUNT; i++) {
 		positions[i * 3] = (Math.random() - 0.5) * BOUNDS_X * 2
 		positions[i * 3 + 1] = (Math.random() - 0.5) * BOUNDS_Y * 2
-		positions[i * 3 + 2] = (Math.random() - 0.5) * 80
+		positions[i * 3 + 2] = (Math.random() - 0.5) * BOUNDS_Z * 2
 
 		const angle = Math.random() * Math.PI * 2
 		const speed = 0.1 + Math.random() * 0.15
@@ -106,6 +111,10 @@ onMounted(() => {
 		mouseY = (e.clientY / window.innerHeight - 0.5) * 2
 	}
 
+	const onScroll = () => {
+		targetScrollY = window.scrollY
+	}
+
 	const onResize = () => {
 		camera.aspect = window.innerWidth / window.innerHeight
 		camera.updateProjectionMatrix()
@@ -114,9 +123,25 @@ onMounted(() => {
 
 	window.addEventListener('mousemove', onMouseMove)
 	window.addEventListener('resize', onResize)
+	window.addEventListener('scroll', onScroll, { passive: true })
 
 	const animate = () => {
 		animationId = requestAnimationFrame(animate)
+
+		// Scroll-driven camera fly-through, clamped to Z > 0 so wrap logic stays valid
+		scrollY += (targetScrollY - scrollY) * 0.06
+		const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+		const scrollProgress = maxScroll > 0 ? scrollY / maxScroll : 0
+		camera.position.z = 500 - scrollProgress * BOUNDS_Z * 1.6
+
+		// Wrap nodes that fell behind the camera
+		for (let i = 0; i < NODE_COUNT; i++) {
+			if (positions[i * 3 + 2] > camera.position.z + 50) {
+				positions[i * 3 + 2] -= BOUNDS_Z * 2
+			} else if (positions[i * 3 + 2] < camera.position.z - BOUNDS_Z * 2) {
+				positions[i * 3 + 2] += BOUNDS_Z * 2
+			}
+		}
 
 		// Update mouse world position and velocity
 		const mw = getMouseWorld()
@@ -182,8 +207,9 @@ onMounted(() => {
 			for (let j = i + 1; j < NODE_COUNT && lineCount < MAX_LINES; j++) {
 				const dx = positions[i * 3] - positions[j * 3]
 				const dy = positions[i * 3 + 1] - positions[j * 3 + 1]
+				const dz = positions[i * 3 + 2] - positions[j * 3 + 2]
 
-				if (dx * dx + dy * dy < threshold2) {
+				if (dx * dx + dy * dy + dz * dz < threshold2) {
 					const base = lineCount * 6
 					linePos[base] = positions[i * 3]
 					linePos[base + 1] = positions[i * 3 + 1]
@@ -214,10 +240,12 @@ onMounted(() => {
 		linePosAttr.needsUpdate = true
 		lineColAttr.needsUpdate = true
 
-		// Subtle camera parallax
+		// Parallax + rotation feel
+		lookTargetX += (mouseX * 80 - lookTargetX) * 0.05
+		lookTargetY += (-mouseY * 80 - lookTargetY) * 0.05
 		camera.position.x += (mouseX * 30 - camera.position.x) * 0.04
 		camera.position.y += (-mouseY * 30 - camera.position.y) * 0.04
-		camera.lookAt(scene.position)
+		camera.lookAt(lookTargetX, lookTargetY, camera.position.z - 300)
 
 		renderer.render(scene, camera)
 	}
@@ -227,6 +255,7 @@ onMounted(() => {
 	onUnmounted(() => {
 		window.removeEventListener('mousemove', onMouseMove)
 		window.removeEventListener('resize', onResize)
+		window.removeEventListener('scroll', onScroll)
 	})
 })
 
