@@ -17,10 +17,8 @@
 		<button
 			@click="scrollToTop"
 			v-show="showBackToTop"
-			class="group fixed bottom-8 right-8 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-primary to-secondary shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-primary/50">
-			<font-awesome-icon
-				icon="arrow-up"
-				class="h-6 w-6 transition-transform group-hover:scale-110" />
+			class="fixed bottom-8 right-8 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-dark/80 text-gray-400 backdrop-blur-sm transition-all duration-300 hover:border-white/40 hover:text-white">
+			<font-awesome-icon icon="arrow-up" class="h-4 w-4" />
 		</button>
 	</div>
 </template>

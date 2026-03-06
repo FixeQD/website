@@ -21,6 +21,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import {
 	faArrowUp,
+	faArrowRight,
 	faCode,
 	faMobileAlt,
 	faServer,
@@ -50,6 +51,7 @@ import {
 	faScaleBalanced,
 	faCheck,
 	faInfoCircle,
+	faGear,
 } from '@fortawesome/free-solid-svg-icons'
 import { defineNuxtPlugin } from 'nuxt/app'
 
@@ -76,6 +78,7 @@ library.add(
 	faAndroid,
 	faVuejs,
 	faArrowUp,
+	faArrowRight,
 	faCode,
 	faMobileAlt,
 	faServer,
@@ -104,7 +107,8 @@ library.add(
 	faLeaf,
 	faScaleBalanced,
 	faCheck,
-	faInfoCircle
+	faInfoCircle,
+	faGear
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

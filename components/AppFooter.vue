@@ -1,13 +1,7 @@
 <template>
-	<footer
-		id="contact"
-		class="relative overflow-hidden border-t border-white/10 bg-gradient-to-t from-white/5 to-transparent px-6 py-20">
-		<!-- Animated background -->
-		<div
-			class="animate-pulse-slow absolute inset-0 bg-[radial-gradient(circle_at_center,#00D9FF10_0%,transparent_70%)]"></div>
-
-		<div class="container relative z-10 mx-auto max-w-4xl text-center">
-			<h2 class="mb-4 font-display text-5xl font-bold">
+	<footer id="contact" class="relative border-t border-white/10 px-6 py-16">
+		<div class="container mx-auto max-w-3xl text-center">
+			<h2 class="mb-10 font-display text-5xl font-bold">
 				Get in
 				<span
 					class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
@@ -15,11 +9,7 @@
 				>
 			</h2>
 
-			<p class="mb-12 text-xl text-gray-400">
-				Interested in working together? Let's connect!
-			</p>
-
-			<div class="mb-12 flex flex-wrap justify-center gap-4">
+			<div class="mb-12 flex flex-wrap justify-center gap-3">
 				<component
 					v-for="social in data?.socials"
 					:key="social.name"
@@ -28,48 +18,37 @@
 					:target="social.name !== 'Discord' ? '_blank' : undefined"
 					:rel="social.name !== 'Discord' ? 'noopener' : undefined"
 					@click="social.name === 'Discord' ? openDiscordModal(social) : null"
-					class="group relative flex items-center gap-3 rounded-xl border border-white/10 bg-gradient-to-r from-white/5 to-white/10 px-8 py-4 transition-all duration-300 hover:scale-105 hover:border-primary/50 hover:from-white/10 hover:to-white/20 hover:shadow-xl hover:shadow-primary/20">
-					<div
-						class="absolute inset-0 rounded-xl bg-gradient-to-r opacity-0 blur-xl transition-opacity group-hover:opacity-10"
-						:style="{ background: social.color }"></div>
-					<font-awesome-icon
-						:icon="['fab', social.icon]"
-						class="relative z-10 h-6 w-6 transition-transform group-hover:scale-110" />
-					<span
-						class="relative z-10 font-medium transition-colors group-hover:text-primary"
-						>{{ social.name }}</span
-					>
+					class="flex items-center gap-2.5 rounded-xl border border-white/10 px-5 py-3 text-sm text-gray-400 transition-all duration-300 hover:border-white/20 hover:text-white">
+					<font-awesome-icon :icon="['fab', social.icon]" class="h-4 w-4" />
+					<span>{{ social.name }}</span>
 				</component>
 			</div>
 
-			<!-- Discord Modal -->
 			<DiscordModal
 				:isOpen="showDiscordModal"
 				:username="discordUsername"
 				:profileUrl="discordProfileUrl"
 				@close="showDiscordModal = false" />
 
-			<!-- License Modal -->
 			<LicenseModal
 				:isOpen="showLicenseModal"
 				:ownerName="data?.developer?.name"
 				@close="showLicenseModal = false" />
 
-			<div class="border-t border-white/10 pt-8">
-				<p class="mb-2 text-sm text-gray-500">
-					&copy; {{ currentYear }} {{ data?.developer?.name }}
+			<div class="border-t border-white/10 pt-8 text-sm text-gray-600">
+				<p class="mb-2">&copy; {{ currentYear }} {{ data?.developer?.name }}</p>
+				<p class="mb-3">
+					Built with <span class="text-primary">Nuxt 3</span>,
+					<span class="text-secondary">Tailwind CSS</span> &amp;
+					<span class="text-primary">Three.js</span> and ofc
+					<font-awesome-icon icon="heart" class="text-red-500" /> on
+					<button
+						@click="showLicenseModal = true"
+						class="inline-flex items-center gap-1 transition hover:text-primary">
+						<font-awesome-icon icon="scale-balanced" class="h-3 w-3" />
+						MIT License
+					</button>
 				</p>
-				<p class="mb-2 text-xs text-gray-600">
-					Built with 💙 using <span class="text-primary">Nuxt 3</span>,
-					<span class="text-secondary">Tailwind CSS</span> &
-					<span class="text-primary">Three.js</span>
-				</p>
-				<button
-					@click="showLicenseModal = true"
-					class="inline-flex items-center gap-2 text-xs text-gray-500 transition hover:text-primary">
-					<font-awesome-icon icon="scale-balanced" class="h-3 w-3" />
-					MIT License
-				</button>
 			</div>
 		</div>
 	</footer>
@@ -96,9 +75,3 @@ const openDiscordModal = (social) => {
 	showDiscordModal.value = true
 }
 </script>
-
-<style scoped>
-.animate-pulse-slow {
-	animation: pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-</style>

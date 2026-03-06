@@ -7,77 +7,105 @@ import * as THREE from 'three'
 import { onMounted, onUnmounted, ref } from 'vue'
 
 const canvasRef = ref(null)
-let scene, camera, renderer, particles, animationId
+let renderer, animationId
 let mouseX = 0,
 	mouseY = 0
 
 onMounted(() => {
 	if (!canvasRef.value) return
 
-	// Initialize Three.js
-	scene = new THREE.Scene()
-	camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000)
+	const scene = new THREE.Scene()
+	const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000)
 	camera.position.z = 500
 
-	renderer = new THREE.WebGLRenderer({
-		canvas: canvasRef.value,
-		alpha: true,
-		antialias: true,
-	})
+	renderer = new THREE.WebGLRenderer({ canvas: canvasRef.value, alpha: true, antialias: true })
 	renderer.setSize(window.innerWidth, window.innerHeight)
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 	renderer.setClearColor(0x000000, 0)
 
-	// Create particles
-	const particleCount = 1500
-	const geometry = new THREE.BufferGeometry()
-	const positions = new Float32Array(particleCount * 3)
-	const colors = new Float32Array(particleCount * 3)
-	const sizes = new Float32Array(particleCount)
+	const NODE_COUNT = 75
+	const CONNECT_DIST = 180
+	const MAX_LINES = 300
+	const BOUNDS_X = 900
+	const BOUNDS_Y = 550
+	const REPEL_RADIUS = 200
+	const REPEL_R2 = REPEL_RADIUS * REPEL_RADIUS
+	const HIGHLIGHT_R = 250
+	const FRICTION = 0.92
+	const MAX_EXTRA_SPEED = 4.0
 
-	const colorPalette = [
-		new THREE.Color(0x00d9ff),
-		new THREE.Color(0xff0080),
-		new THREE.Color(0x00ff88),
-	]
+	const positions = new Float32Array(NODE_COUNT * 3)
+	const baseVelocities = new Float32Array(NODE_COUNT * 2)
+	const extraVelocities = new Float32Array(NODE_COUNT * 2)
 
-	for (let i = 0; i < particleCount; i++) {
-		const i3 = i * 3
-		positions[i3] = (Math.random() - 0.5) * 2000
-		positions[i3 + 1] = (Math.random() - 0.5) * 2000
-		positions[i3 + 2] = (Math.random() - 0.5) * 1000
+	for (let i = 0; i < NODE_COUNT; i++) {
+		positions[i * 3] = (Math.random() - 0.5) * BOUNDS_X * 2
+		positions[i * 3 + 1] = (Math.random() - 0.5) * BOUNDS_Y * 2
+		positions[i * 3 + 2] = (Math.random() - 0.5) * 80
 
-		const color = colorPalette[Math.floor(Math.random() * colorPalette.length)]
-		colors[i3] = color.r
-		colors[i3 + 1] = color.g
-		colors[i3 + 2] = color.b
-
-		sizes[i] = Math.random() * 3 + 1
+		const angle = Math.random() * Math.PI * 2
+		const speed = 0.1 + Math.random() * 0.15
+		baseVelocities[i * 2] = Math.cos(angle) * speed
+		baseVelocities[i * 2 + 1] = Math.sin(angle) * speed
 	}
 
-	geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-	geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-	geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1))
+	// Node points
+	const nodeGeo = new THREE.BufferGeometry()
+	const nodePosAttr = new THREE.BufferAttribute(positions, 3)
+	nodePosAttr.setUsage(THREE.DynamicDrawUsage)
+	nodeGeo.setAttribute('position', nodePosAttr)
+	scene.add(
+		new THREE.Points(
+			nodeGeo,
+			new THREE.PointsMaterial({
+				size: 2,
+				color: 0xffffff,
+				transparent: true,
+				opacity: 0.5,
+				sizeAttenuation: true,
+			})
+		)
+	)
 
-	const material = new THREE.PointsMaterial({
-		size: 2,
-		vertexColors: true,
-		transparent: true,
-		opacity: 0.8,
-		sizeAttenuation: true,
-		blending: THREE.AdditiveBlending,
-	})
+	// Lines with vertex colors for dynamic brightening
+	const linePos = new Float32Array(MAX_LINES * 6)
+	const lineColors = new Float32Array(MAX_LINES * 6)
+	const lineGeo = new THREE.BufferGeometry()
+	const linePosAttr = new THREE.BufferAttribute(linePos, 3)
+	const lineColAttr = new THREE.BufferAttribute(lineColors, 3)
+	linePosAttr.setUsage(THREE.DynamicDrawUsage)
+	lineColAttr.setUsage(THREE.DynamicDrawUsage)
+	lineGeo.setAttribute('position', linePosAttr)
+	lineGeo.setAttribute('color', lineColAttr)
+	lineGeo.setDrawRange(0, 0)
+	scene.add(
+		new THREE.LineSegments(
+			lineGeo,
+			new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.4 })
+		)
+	)
 
-	particles = new THREE.Points(geometry, material)
-	scene.add(particles)
+	let mouseWorldX = 0,
+		mouseWorldY = 0
+	let mouseVelX = 0,
+		mouseVelY = 0
 
-	// Mouse move handler
-	const onMouseMove = (event) => {
-		mouseX = (event.clientX - window.innerWidth / 2) * 0.1
-		mouseY = (event.clientY - window.innerHeight / 2) * 0.1
+	const getMouseWorld = () => {
+		const ndc = new THREE.Vector3(mouseX, -mouseY, 0.5)
+		ndc.unproject(camera)
+		const dir = ndc.sub(camera.position).normalize()
+		const t = -camera.position.z / dir.z
+		return {
+			x: camera.position.x + t * dir.x,
+			y: camera.position.y + t * dir.y,
+		}
 	}
 
-	// Resize handler
+	const onMouseMove = (e) => {
+		mouseX = (e.clientX / window.innerWidth - 0.5) * 2
+		mouseY = (e.clientY / window.innerHeight - 0.5) * 2
+	}
+
 	const onResize = () => {
 		camera.aspect = window.innerWidth / window.innerHeight
 		camera.updateProjectionMatrix()
@@ -87,15 +115,108 @@ onMounted(() => {
 	window.addEventListener('mousemove', onMouseMove)
 	window.addEventListener('resize', onResize)
 
-	// Animation loop
 	const animate = () => {
 		animationId = requestAnimationFrame(animate)
 
-		particles.rotation.y += 0.0005
-		particles.rotation.x += 0.0003
+		// Update mouse world position and velocity
+		const mw = getMouseWorld()
+		mouseVelX = mw.x - mouseWorldX
+		mouseVelY = mw.y - mouseWorldY
+		mouseWorldX = mw.x
+		mouseWorldY = mw.y
+		const mouseSpeed = Math.sqrt(mouseVelX * mouseVelX + mouseVelY * mouseVelY)
 
-		camera.position.x += (mouseX - camera.position.x) * 0.05
-		camera.position.y += (-mouseY - camera.position.y) * 0.05
+		// Update node physics
+		for (let i = 0; i < NODE_COUNT; i++) {
+			const dx = positions[i * 3] - mouseWorldX
+			const dy = positions[i * 3 + 1] - mouseWorldY
+			const dist2 = dx * dx + dy * dy
+
+			if (dist2 < REPEL_R2 && dist2 > 1) {
+				const dist = Math.sqrt(dist2)
+				const falloff = 1 - dist / REPEL_RADIUS
+
+				// Radial repulsion - nodes flee the cursor
+				extraVelocities[i * 2] += (dx / dist) * falloff * 0.35
+				extraVelocities[i * 2 + 1] += (dy / dist) * falloff * 0.35
+
+				// Wake force - fast mouse drags nodes along
+				if (mouseSpeed > 2) {
+					const wake = falloff * Math.min(mouseSpeed * 0.08, 1.5)
+					extraVelocities[i * 2] += (mouseVelX / mouseSpeed) * wake
+					extraVelocities[i * 2 + 1] += (mouseVelY / mouseSpeed) * wake
+				}
+			}
+
+			// Decay extra velocity
+			extraVelocities[i * 2] *= FRICTION
+			extraVelocities[i * 2 + 1] *= FRICTION
+
+			// Cap speed
+			const ev = Math.sqrt(
+				extraVelocities[i * 2] * extraVelocities[i * 2] +
+					extraVelocities[i * 2 + 1] * extraVelocities[i * 2 + 1]
+			)
+			if (ev > MAX_EXTRA_SPEED) {
+				extraVelocities[i * 2] = (extraVelocities[i * 2] / ev) * MAX_EXTRA_SPEED
+				extraVelocities[i * 2 + 1] = (extraVelocities[i * 2 + 1] / ev) * MAX_EXTRA_SPEED
+			}
+
+			// Integrate position
+			positions[i * 3] += baseVelocities[i * 2] + extraVelocities[i * 2]
+			positions[i * 3 + 1] += baseVelocities[i * 2 + 1] + extraVelocities[i * 2 + 1]
+
+			// Wrap at bounds
+			if (positions[i * 3] > BOUNDS_X) positions[i * 3] = -BOUNDS_X
+			if (positions[i * 3] < -BOUNDS_X) positions[i * 3] = BOUNDS_X
+			if (positions[i * 3 + 1] > BOUNDS_Y) positions[i * 3 + 1] = -BOUNDS_Y
+			if (positions[i * 3 + 1] < -BOUNDS_Y) positions[i * 3 + 1] = BOUNDS_Y
+		}
+		nodePosAttr.needsUpdate = true
+
+		// Rebuild line segments
+		let lineCount = 0
+		const threshold2 = CONNECT_DIST * CONNECT_DIST
+
+		for (let i = 0; i < NODE_COUNT && lineCount < MAX_LINES; i++) {
+			for (let j = i + 1; j < NODE_COUNT && lineCount < MAX_LINES; j++) {
+				const dx = positions[i * 3] - positions[j * 3]
+				const dy = positions[i * 3 + 1] - positions[j * 3 + 1]
+
+				if (dx * dx + dy * dy < threshold2) {
+					const base = lineCount * 6
+					linePos[base] = positions[i * 3]
+					linePos[base + 1] = positions[i * 3 + 1]
+					linePos[base + 2] = positions[i * 3 + 2]
+					linePos[base + 3] = positions[j * 3]
+					linePos[base + 4] = positions[j * 3 + 1]
+					linePos[base + 5] = positions[j * 3 + 2]
+
+					// Brighten lines near the cursor
+					const midX = (positions[i * 3] + positions[j * 3]) / 2
+					const midY = (positions[i * 3 + 1] + positions[j * 3 + 1]) / 2
+					const mdx = midX - mouseWorldX
+					const mdy = midY - mouseWorldY
+					const mDist2 = mdx * mdx + mdy * mdy
+					const brightness =
+						mDist2 < HIGHLIGHT_R * HIGHLIGHT_R
+							? 0.175 + (1 - Math.sqrt(mDist2) / HIGHLIGHT_R) * 0.825
+							: 0.175
+
+					for (let c = 0; c < 6; c++) lineColors[base + c] = brightness
+
+					lineCount++
+				}
+			}
+		}
+
+		lineGeo.setDrawRange(0, lineCount * 2)
+		linePosAttr.needsUpdate = true
+		lineColAttr.needsUpdate = true
+
+		// Subtle camera parallax
+		camera.position.x += (mouseX * 30 - camera.position.x) * 0.04
+		camera.position.y += (-mouseY * 30 - camera.position.y) * 0.04
 		camera.lookAt(scene.position)
 
 		renderer.render(scene, camera)
@@ -103,7 +224,6 @@ onMounted(() => {
 
 	animate()
 
-	// Cleanup
 	onUnmounted(() => {
 		window.removeEventListener('mousemove', onMouseMove)
 		window.removeEventListener('resize', onResize)
@@ -111,11 +231,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-	if (animationId) {
-		cancelAnimationFrame(animationId)
-	}
-	if (renderer) {
-		renderer.dispose()
-	}
+	if (animationId) cancelAnimationFrame(animationId)
+	if (renderer) renderer.dispose()
 })
 </script>
