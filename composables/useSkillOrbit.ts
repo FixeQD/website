@@ -211,15 +211,13 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 		(count) => {
 			if (count > 0) {
 				initStates(count)
-				start()
+				if (typeof window !== 'undefined') {
+					start()
+				}
 			}
 		},
 		{ immediate: true }
 	)
-
-	if (typeof window !== 'undefined') {
-		start()
-	}
 
 	onUnmounted(() => {
 		stop()

@@ -1,7 +1,9 @@
 <template>
 	<div class="relative min-h-screen">
 		<!-- Three.js animated background -->
-		<ThreeBackground />
+		<ClientOnly>
+			<ThreeBackground />
+		</ClientOnly>
 
 		<AppHeader />
 
