@@ -11,13 +11,6 @@ export default defineNuxtConfig({
 
 	modules: ['@nuxtjs/tailwindcss', '@nuxt/icon', 'nuxt-og-image'],
 
-	nitro: {
-		prerender: {
-			routes: ['/'],
-			crawlLinks: false,
-		},
-	},
-
 	sourcemap: false,
 
 	app: {
