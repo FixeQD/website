@@ -58,7 +58,7 @@
 						letter-spacing: 2px;
 						text-transform: uppercase;
 					">
-					Website
+					Portfolio
 				</span>
 			</div>
 
