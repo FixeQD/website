@@ -9,7 +9,14 @@ export default defineNuxtConfig({
 		port: 3001,
 	},
 
-	modules: ['@nuxtjs/tailwindcss', '@nuxt/icon'],
+	modules: ['@nuxtjs/tailwindcss', '@nuxt/icon', 'nuxt-og-image'],
+
+	nitro: {
+		prerender: {
+			routes: ['/'],
+			crawlLinks: false,
+		},
+	},
 
 	sourcemap: false,
 
@@ -36,7 +43,6 @@ export default defineNuxtConfig({
 					property: 'og:description',
 					content: 'Self-taught full-stack dev from Poland. Web, mobile, Arch Linux.',
 				},
-				{ property: 'og:image', content: 'https://fixeq.me/avatar.jpg' },
 				{ property: 'og:image:width', content: '1200' },
 				{ property: 'og:image:height', content: '630' },
 				{ property: 'og:image:alt', content: 'FixeQ' },
@@ -51,14 +57,13 @@ export default defineNuxtConfig({
 					name: 'twitter:description',
 					content: 'Self-taught full-stack dev from Poland. Web, mobile, Arch Linux.',
 				},
-				{ name: 'twitter:image', content: 'https://fixeq.me/avatar.jpg' },
 				{ name: 'twitter:image:alt', content: 'FixeQ' },
 			],
 			link: [
 				{
 					rel: 'icon',
 					type: 'image/svg+xml',
-					href: 'data:image/svg+xml,<svg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27><text y=%27.9em%27 font-size=%2790%27>⚡</text></svg>',
+					href: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>",
 				},
 				{ rel: 'canonical', href: 'https://fixeq.me' },
 			],
@@ -66,7 +71,4 @@ export default defineNuxtConfig({
 	},
 
 	css: ['@fortawesome/fontawesome-svg-core/styles.css'],
-
-	// Generate static site for GitHub Pages
-	ssr: false,
 })

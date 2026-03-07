@@ -29,6 +29,13 @@ const showBackToTop = ref(false)
 
 await fetchData()
 
+defineOgImage({
+	component: 'FixeQ',
+	name: data.value?.developer?.nickname ?? 'FixeQ',
+	title: data.value?.developer?.title ?? 'Full Stack Developer',
+	avatar: 'https://fixeq.me/avatar.jpg',
+})
+
 onMounted(() => {
 	const handleScroll = () => {
 		showBackToTop.value = window.scrollY > 500
