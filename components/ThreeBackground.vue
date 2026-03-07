@@ -27,9 +27,9 @@ onMounted(() => {
 	renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 	renderer.setClearColor(0x000000, 0)
 
-	const NODE_COUNT = 75
-	const CONNECT_DIST = 180
-	const MAX_LINES = 300
+	const NODE_COUNT = 150
+	const CONNECT_DIST = 200
+	const MAX_LINES = 310
 	const BOUNDS_X = 900
 	const BOUNDS_Y = 550
 	const BOUNDS_Z = 600
