@@ -30,6 +30,7 @@ onMounted(() => {
 	const NODE_COUNT = 150
 	const CONNECT_DIST = 200
 	const MAX_LINES = 310
+	const MAX_SCREEN_DIST_SQ = 0.8 * 0.8
 	const BOUNDS_X = 900
 	const BOUNDS_Y = 550
 	const BOUNDS_Z = 600
@@ -53,6 +54,9 @@ onMounted(() => {
 		baseVelocities[i * 2] = Math.cos(angle) * speed
 		baseVelocities[i * 2 + 1] = Math.sin(angle) * speed
 	}
+
+	const _projVec = new THREE.Vector3()
+	const screenPos = new Float32Array(NODE_COUNT * 2)
 
 	// Node points
 	const nodeGeo = new THREE.BufferGeometry()
@@ -199,12 +203,26 @@ onMounted(() => {
 		}
 		nodePosAttr.needsUpdate = true
 
+		// Project all nodes to NDC for screen-space distance check
+		camera.updateMatrixWorld()
+		for (let i = 0; i < NODE_COUNT; i++) {
+			_projVec.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2])
+			_projVec.project(camera)
+			// z > 1 means behind the camera
+			screenPos[i * 2] = _projVec.z > 1 ? Infinity : _projVec.x
+			screenPos[i * 2 + 1] = _projVec.z > 1 ? Infinity : _projVec.y
+		}
+
 		// Rebuild line segments
 		let lineCount = 0
 		const threshold2 = CONNECT_DIST * CONNECT_DIST
 
 		for (let i = 0; i < NODE_COUNT && lineCount < MAX_LINES; i++) {
 			for (let j = i + 1; j < NODE_COUNT && lineCount < MAX_LINES; j++) {
+				const sdx = screenPos[i * 2] - screenPos[j * 2]
+				const sdy = screenPos[i * 2 + 1] - screenPos[j * 2 + 1]
+				if (sdx * sdx + sdy * sdy > MAX_SCREEN_DIST_SQ) continue
+
 				const dx = positions[i * 3] - positions[j * 3]
 				const dy = positions[i * 3 + 1] - positions[j * 3 + 1]
 				const dz = positions[i * 3 + 2] - positions[j * 3 + 2]
