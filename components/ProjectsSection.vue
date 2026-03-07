@@ -1,13 +1,24 @@
 <template>
 	<section id="projects" class="relative px-6 py-20">
 		<div class="container mx-auto max-w-6xl">
-			<h2 class="mb-12 text-center font-display text-5xl font-bold">
+			<h2 class="mb-3 text-center font-display text-5xl font-bold">
 				Featured
 				<span
 					class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
 					>Projects</span
 				>
 			</h2>
+			<p class="mb-12 text-center text-sm text-gray-500">
+				Smaller and older projects aren't listed here - they're just not worth showing off
+				there. Check
+				<a
+					href="https://github.com/FixeQD"
+					target="_blank"
+					class="text-gray-400 underline underline-offset-2 transition-colors duration-200 hover:text-white"
+					>GitHub</a
+				>
+				for the rest.
+			</p>
 
 			<div v-if="projects?.underConstruction" class="py-20 text-center">
 				<div class="mb-6 text-8xl">🚧</div>
