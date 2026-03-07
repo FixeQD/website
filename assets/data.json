@@ -3,10 +3,10 @@
 		"name": "Paweł Sobczak",
 		"nickname": "FixeQ",
 		"title": "Full Stack Developer & Linux Enthusiast",
-		"tagline": "Crafting Digital Experiences with Code",
-		"description": "Passionate full-stack developer specializing in modern web technologies, mobile development, and creating innovative digital solutions. I love working with cutting-edge frameworks and building applications that make a difference. My expertise spans from frontend technologies like JavaScript and CSS to backend systems and mobile app development.",
+		"tagline": "I build things for the web. And obsess over my Arch setup.",
+		"description": "Self-taught dev from Poland. I started with web, moved to apps, and never really stopped picking up new things. I mostly work with Rust, React and TypeScript these days. Outside of coding I'm tweaking my Arch Linux setup or breaking something just to fix it again :P",
 		"avatar": "/avatar.jpg",
-		"location": "Poland • Arch Linux Enthusiast",
+		"location": "Poland",
 		"experience": "3+ Years",
 		"projectsCompleted": "25+",
 		"technologiesMastered": "15+",
@@ -140,7 +140,7 @@
 			"url": "https://github.com/FixeQD",
 			"icon": "github",
 			"color": "#00D9FF",
-			"description": "Check out my open source projects and contributions"
+			"description": "Where the actual code lives"
 		},
 		{
 			"name": "Discord",
@@ -148,38 +148,38 @@
 			"icon": "discord",
 			"color": "#5865F2",
 			"username": "fixeq.dev",
-			"description": "Connect with me on Discord"
+			"description": "Hit me up here"
 		},
 		{
 			"name": "Instagram",
 			"url": "https://instagram.com/fixeq.dev",
 			"icon": "instagram",
 			"color": "#E4405F",
-			"description": "Behind the scenes of my development journey"
+			"description": "Occasional life stuff"
 		}
 	],
 	"achievements": [
 		{
-			"title": "Self-taught Developer",
-			"description": "Built expertise through continuous learning and hands-on projects",
+			"title": "Self-taught",
+			"description": "No bootcamp, no CS degree. Just docs, Stack Overflow (sometimes AI too lol) and a lot of trial and error. ",
 			"icon": ["fas", "graduation-cap"],
 			"color": "#8B5CF6"
 		},
 		{
-			"title": "Open Source Contributor",
-			"description": "Active contributor to various open source projects on GitHub",
+			"title": "Open Source",
+			"description": "A few projects on GitHub people actually use. That still feels weird.",
 			"icon": ["fas", "star"],
 			"color": "#FBBF24"
 		},
 		{
-			"title": "Linux Power User",
-			"description": "Advanced user of Arch Linux with deep system knowledge",
+			"title": "Arch Linux",
+			"description": "btw",
 			"icon": ["fab", "linux"],
 			"color": "#1793D1"
 		},
 		{
 			"title": "Problem Solver",
-			"description": "Passionate about solving complex technical challenges",
+			"description": "I genuinely (sometimes) enjoy debugging. Yes, I know how that sounds.",
 			"icon": ["fas", "puzzle-piece"],
 			"color": "#10B981"
 		}
