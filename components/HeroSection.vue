@@ -17,10 +17,10 @@
 
 				<h1
 					class="mb-8 font-display text-4xl font-bold leading-tight md:text-5xl lg:text-6xl">
-					I build stuff<br />
+					I build things<br />
 					<span
 						class="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-						for everyone
+						for the web.
 					</span>
 				</h1>
 

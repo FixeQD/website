@@ -6,6 +6,7 @@
 			"id": "spicetify-cat-jam",
 			"title": "Cat-Jam Synced (Reborn) for Spicetify",
 			"description": "A reborn and optimized Cat-Jam experience, perfectly in sync with your beat.",
+			"emoji": "🐱",
 			"category": "frontend",
 			"technologies": ["TypeScript", "React"],
 			"demoUrl": null,

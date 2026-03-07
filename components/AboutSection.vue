@@ -107,6 +107,27 @@
 					</template>
 				</div>
 			</div>
+
+			<!-- Achievements -->
+			<div class="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
+				<div
+					v-for="achievement in data?.achievements"
+					:key="achievement.title"
+					class="rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors duration-300 hover:border-white/20">
+					<div
+						class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
+						:style="{ background: `${achievement.color}20` }">
+						<font-awesome-icon
+							:icon="achievement.icon"
+							class="h-4 w-4"
+							:style="{ color: achievement.color }" />
+					</div>
+					<div class="mb-1 text-sm font-semibold text-white">{{ achievement.title }}</div>
+					<div class="text-xs leading-relaxed text-gray-500">
+						{{ achievement.description }}
+					</div>
+				</div>
+			</div>
 		</div>
 	</section>
 </template>

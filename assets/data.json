@@ -117,19 +117,9 @@
 					"color": "#1793D1"
 				},
 				{
-					"name": "Git & GitHub",
-					"icon": ["fab", "git-alt"],
-					"color": "#F05032"
-				},
-				{
 					"name": "Docker",
 					"icon": ["fab", "docker"],
 					"color": "#2496ED"
-				},
-				{
-					"name": "VS Code",
-					"icon": ["fas", "laptop-code"],
-					"color": "#007ACC"
 				}
 			]
 		}

@@ -33,7 +33,7 @@
 					@click="openModal(project)">
 					<div
 						class="mb-4 flex h-36 items-center justify-center overflow-hidden rounded-xl bg-white/5 text-4xl transition-transform duration-300 group-hover:scale-105">
-						💻
+						{{ project.emoji ?? '💻' }}
 					</div>
 					<h3
 						class="mb-2 text-lg font-semibold transition-colors duration-300 group-hover:text-primary">
@@ -59,6 +59,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import ProjectModal from './popup/ProjectModal.vue'
 
 const props = defineProps({

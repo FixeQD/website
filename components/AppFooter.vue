@@ -55,6 +55,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import DiscordModal from './popup/DiscordModal.vue'
 import LicenseModal from './popup/LicenseModal.vue'
 
