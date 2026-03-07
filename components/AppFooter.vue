@@ -10,6 +10,12 @@
 			</h2>
 
 			<div class="mb-12 flex flex-wrap justify-center gap-3">
+				<a
+					href="mailto:meow@fixeq.me"
+					class="flex items-center gap-2.5 rounded-xl border border-white/10 px-5 py-3 text-sm text-gray-400 transition-all duration-300 hover:border-white/20 hover:text-white">
+					<font-awesome-icon icon="envelope" class="h-4 w-4" />
+					<span>E-mail</span>
+				</a>
 				<component
 					v-for="social in data?.socials"
 					:key="social.name"
