@@ -30,7 +30,7 @@ onMounted(() => {
 	const NODE_COUNT = 150
 	const CONNECT_DIST = 200
 	const MAX_LINES = 310
-	const MAX_SCREEN_DIST_SQ = 0.8 * 0.8
+	const MAX_SCREEN_DIST_SQ = 2.0 * 2.0
 	const BOUNDS_X = 900
 	const BOUNDS_Y = 550
 	const BOUNDS_Z = 600
@@ -166,12 +166,12 @@ onMounted(() => {
 				const falloff = 1 - dist / REPEL_RADIUS
 
 				// Radial repulsion - nodes flee the cursor
-				extraVelocities[i * 2] += (dx / dist) * falloff * 0.35
-				extraVelocities[i * 2 + 1] += (dy / dist) * falloff * 0.35
+				extraVelocities[i * 2] += (dx / dist) * falloff * 0.2
+				extraVelocities[i * 2 + 1] += (dy / dist) * falloff * 0.2
 
 				// Wake force - fast mouse drags nodes along
-				if (mouseSpeed > 2) {
-					const wake = falloff * Math.min(mouseSpeed * 0.08, 1.5)
+				if (mouseSpeed > 3) {
+					const wake = falloff * Math.min(mouseSpeed * 0.04, 0.8)
 					extraVelocities[i * 2] += (mouseVelX / mouseSpeed) * wake
 					extraVelocities[i * 2 + 1] += (mouseVelY / mouseSpeed) * wake
 				}
