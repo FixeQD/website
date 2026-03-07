@@ -1,4 +1,5 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import type { BuildOptions } from 'vite'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -12,6 +13,67 @@ export default defineNuxtConfig({
 	modules: ['@nuxtjs/tailwindcss', '@nuxt/icon', 'nuxt-og-image'],
 
 	sourcemap: false,
+
+	vite: {
+		build: {
+			minify: 'terser',
+			terserOptions: {
+				compress: {
+					drop_console: true,
+					drop_debugger: true,
+					passes: 3,
+					pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.warn'],
+					dead_code: true,
+					collapse_vars: true,
+					reduce_vars: true,
+					booleans_as_integers: true,
+					unsafe_arrows: true,
+					unsafe_methods: true,
+				},
+				mangle: {
+					toplevel: true,
+					safari10: false,
+				},
+				format: {
+					comments: false,
+				},
+			},
+			rollupOptions: {
+				output: {
+					manualChunks(id) {
+						if (id.includes('node_modules')) {
+							if (id.includes('vue') || id.includes('@vue')) return 'vue-vendor'
+							if (id.includes('@fortawesome')) return 'icons'
+							return 'vendor'
+						}
+					},
+					chunkFileNames: '_nuxt/[hash].js',
+					entryFileNames: '_nuxt/[hash].js',
+					assetFileNames: '_nuxt/[hash].[ext]',
+				},
+			},
+			cssMinify: true,
+			reportCompressedSize: false,
+			chunkSizeWarningLimit: 1000,
+		} as BuildOptions,
+		optimizeDeps: {
+			include: ['vue', 'vue-router'],
+		},
+	},
+
+	nitro: {
+		compressPublicAssets: {
+			gzip: true,
+			brotli: true,
+		},
+		minify: true,
+	},
+
+	experimental: {
+		payloadExtraction: false,
+		renderJsonPayloads: true,
+		treeshakeClientOnly: true,
+	},
 
 	app: {
 		baseURL: '/',

@@ -21,6 +21,7 @@
 		"nuxt-og-image": "^5.1.13",
 		"prettier": "^3.7.4",
 		"prettier-plugin-tailwindcss": "^0.7.2",
+		"terser": "^5.46.0",
 		"three": "^0.181.2",
 		"vue": "^3.5.13"
 	},
