@@ -3,138 +3,123 @@
 		style="
 			width: 1200px;
 			height: 630px;
-			background: #0a0a0f;
+			background-color: #0a0a0f;
 			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding: 80px 100px;
+			flex-direction: column;
+			justify-content: center;
+			padding: 0 90px;
+			font-family: Inter, sans-serif;
 			position: relative;
 			overflow: hidden;
 		">
-		<!-- Background grid decoration -->
 		<div
 			style="
 				position: absolute;
-				inset: 0;
-				background-image:
-					linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-					linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-				background-size: 60px 60px;
+				left: 0;
+				top: 0;
+				width: 4px;
+				height: 630px;
+				background-color: #00d9ff;
 			" />
 
-		<!-- Cyan glow blob left -->
 		<div
 			style="
 				position: absolute;
-				top: -100px;
-				left: -100px;
-				width: 500px;
-				height: 500px;
-				background: radial-gradient(circle, rgba(0, 217, 255, 0.08) 0%, transparent 70%);
+				right: 90px;
+				top: 50%;
+				margin-top: -100px;
+				width: 200px;
+				height: 200px;
 				border-radius: 9999px;
-			" />
-
-		<!-- Pink glow blob right -->
-		<div
-			style="
-				position: absolute;
-				bottom: -100px;
-				right: 200px;
-				width: 400px;
-				height: 400px;
-				background: radial-gradient(circle, rgba(255, 0, 128, 0.06) 0%, transparent 70%);
-				border-radius: 9999px;
-			" />
-
-		<!-- Left: text content -->
-		<div style="display: flex; flex-direction: column; gap: 0; position: relative; z-index: 1">
-			<!-- Tagline -->
-			<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px">
-				<div style="width: 6px; height: 6px; border-radius: 9999px; background: #00d9ff" />
-				<span
-					style="
-						color: #00d9ff;
-						font-size: 18px;
-						letter-spacing: 2px;
-						text-transform: uppercase;
-					">
-					Portfolio
-				</span>
-			</div>
-
-			<!-- Name -->
-			<div
-				style="
-					font-size: 88px;
-					font-weight: 900;
-					color: #00d9ff;
-					line-height: 1;
-					margin-bottom: 16px;
-					letter-spacing: -2px;
-				">
-				{{ name }}
-			</div>
-
-			<!-- Title -->
-			<div
-				style="
-					font-size: 26px;
-					color: #9ca3af;
-					margin-bottom: 40px;
-					max-width: 480px;
-					line-height: 1.4;
-				">
-				{{ title }}
-			</div>
-
-			<!-- URL pill -->
-			<div
-				style="
-					display: flex;
-					align-items: center;
-					gap: 10px;
-					padding: 10px 24px;
-					border: 1px solid rgba(0, 217, 255, 0.3);
-					border-radius: 9999px;
-					width: fit-content;
-					background: rgba(0, 217, 255, 0.05);
-				">
-				<div style="width: 8px; height: 8px; border-radius: 9999px; background: #00d9ff" />
-				<span style="color: #00d9ff; font-size: 20px">fixeq.me</span>
-			</div>
+				border: 2px solid rgba(0, 217, 255, 0.5);
+				overflow: hidden;
+			">
+			<img :src="avatar" style="width: 200px; height: 200px; border-radius: 9999px" />
 		</div>
 
-		<!-- Right: avatar -->
-		<div
-			style="
-				position: relative;
-				z-index: 1;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-			">
-			<!-- Glow ring -->
+		<div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 28px">
+			<span style="color: #00d9ff; font-size: 18px; font-weight: 600">~/portfolio</span>
+			<span style="color: #6b7280; font-size: 18px; margin-left: 6px">on</span>
+			<span style="color: #ff0080; font-size: 18px; margin-left: 6px">main</span>
+			<span style="color: #6b7280; font-size: 18px; margin-left: 6px">&gt;</span>
+		</div>
+
+		<div style="display: flex; flex-direction: row; align-items: baseline; margin-bottom: 16px">
+			<span
+				style="
+					color: #ffffff;
+					font-size: 86px;
+					font-weight: 900;
+					line-height: 1;
+					letter-spacing: -2px;
+				"
+				>Fixe</span
+			><span
+				style="
+					color: #00d9ff;
+					font-size: 86px;
+					font-weight: 900;
+					line-height: 1;
+					letter-spacing: -2px;
+				"
+				>Q</span
+			>
+		</div>
+
+		<span style="color: #6b7280; font-size: 24px; margin-bottom: 44px">{{ title }}</span>
+
+		<!-- Tags: absolute positioned side by side -->
+		<div style="position: relative; height: 40px; width: 600px">
 			<div
 				style="
 					position: absolute;
-					width: 280px;
-					height: 280px;
-					border-radius: 9999px;
-					background: radial-gradient(
-						circle,
-						rgba(0, 217, 255, 0.15) 0%,
-						transparent 70%
-					);
-				" />
-			<img
-				:src="avatar"
+					left: 0;
+					top: 0;
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					padding: 8px 20px;
+					border: 1px solid #00d9ff;
+					border-radius: 6px;
+					background-color: rgba(0, 217, 255, 0.08);
+				">
+				<span style="color: #00d9ff; font-size: 16px; font-weight: 600">fixeq.me</span>
+			</div>
+			<div
 				style="
-					width: 220px;
-					height: 220px;
-					border-radius: 9999px;
-					border: 3px solid rgba(0, 217, 255, 0.6);
-					position: relative;
-				" />
+					position: absolute;
+					left: 130px;
+					top: 0;
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					padding: 8px 20px;
+					border: 1px solid #1793d1;
+					border-radius: 6px;
+					background-color: rgba(23, 147, 209, 0.08);
+				">
+				<span style="color: #1793d1; font-size: 16px; font-weight: 600"
+					>Arch Linux btw</span
+				>
+			</div>
+			<div
+				style="
+					position: absolute;
+					left: 300px;
+					top: 0;
+					display: flex;
+					flex-direction: row;
+					align-items: center;
+					padding: 8px 20px;
+					border: 1px solid #dc143c;
+					border-radius: 6px;
+					background-color: rgba(220, 20, 60, 0.08);
+				">
+				<span style="color: #ffffff; font-size: 16px; font-weight: 600">PL</span
+				><span style="color: #dc143c; font-size: 16px; font-weight: 600; margin-left: 6px"
+					>Poland</span
+				>
+			</div>
 		</div>
 	</div>
 </template>
