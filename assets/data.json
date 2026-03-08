@@ -172,6 +172,12 @@
 			"description": "I genuinely (sometimes) enjoy debugging. Yes, I know how that sounds.",
 			"icon": ["fas", "puzzle-piece"],
 			"color": "#10B981"
+		},
+		{
+			"title": "AI-assisted Dev",
+			"description": "Not a vibe coder. I actually write the code - just sometimes with AI helping out. Knowing what to ask and why it works matters more than pretending you typed every line yourself.",
+			"icon": ["fas", "bolt"],
+			"color": "#F59E0B"
 		}
 	]
 }

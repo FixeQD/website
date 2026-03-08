@@ -109,11 +109,11 @@
 			</div>
 
 			<!-- Achievements -->
-			<div class="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
+			<div class="mt-5 flex flex-wrap justify-center gap-4">
 				<div
 					v-for="achievement in data?.achievements"
 					:key="achievement.title"
-					class="rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors duration-300 hover:border-white/20">
+					class="w-[calc(50%-8px)] rounded-2xl border border-white/10 bg-white/5 p-5 transition-colors duration-300 hover:border-white/20 md:w-[calc(33.333%-11px)]">
 					<div
 						class="mb-3 flex h-10 w-10 items-center justify-center rounded-xl"
 						:style="{ background: `${achievement.color}20` }">
