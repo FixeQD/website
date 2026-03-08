@@ -10,6 +10,17 @@ export default defineNuxtConfig({
 		port: 3001,
 	},
 
+	nitro: {
+		prerender: {
+			routes: ['/'],
+		},
+		compressPublicAssets: {
+			gzip: true,
+			brotli: true,
+		},
+		minify: true,
+	},
+
 	modules: ['@nuxtjs/tailwindcss', '@nuxt/icon', 'nuxt-og-image'],
 
 	sourcemap: false,
@@ -59,14 +70,6 @@ export default defineNuxtConfig({
 		optimizeDeps: {
 			include: ['vue', 'vue-router'],
 		},
-	},
-
-	nitro: {
-		compressPublicAssets: {
-			gzip: true,
-			brotli: true,
-		},
-		minify: true,
 	},
 
 	experimental: {
