@@ -1,9 +1,17 @@
 import { defineNuxtConfig } from 'nuxt/config'
+
+// https://nuxtseo.com/og-image/getting-started/installation
 import type { BuildOptions } from 'vite'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	compatibilityDate: '2024-11-01',
+
+	runtimeConfig: {
+		public: {
+			siteUrl: 'https://fixeq.me',
+		},
+	},
 	devtools: { enabled: false },
 	devServer: {
 		host: '0.0.0.0',
