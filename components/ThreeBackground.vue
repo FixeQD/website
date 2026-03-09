@@ -29,9 +29,10 @@ onMounted(() => {
 	renderer.setClearColor(0x000000, 0)
 
 	const NODE_COUNT = 150
-	const CONNECT_DIST = 200
-	const MAX_LINES = 310
-	const MAX_SCREEN_DIST_SQ = 2.0 * 2.0
+	const CONNECT_DIST = 85
+	const MAX_LINES = 280
+	const MAX_SCREEN_DIST_SQ = 0.75 * 0.75
+
 	const BOUNDS_X = 900
 	const BOUNDS_Y = 550
 	const BOUNDS_Z = 600
@@ -56,6 +57,12 @@ onMounted(() => {
 	const SOFT_MARGIN = 180
 	const SOFT_FORCE = 0.007
 
+	// Periodic charge toward cursor
+	const CHARGE_SPEED_MULT = 3.0
+	const CHARGE_DURATION_FRAMES = 90
+	const CHARGE_INTERVAL_MIN = 300
+	const CHARGE_INTERVAL_MAX = 800
+
 	// Buffers
 	const positions = new Float32Array(NODE_COUNT * 3)
 	const driftAngles = new Float32Array(NODE_COUNT)
@@ -65,20 +72,46 @@ onMounted(() => {
 	const extraVelocities = new Float32Array(NODE_COUNT * 2)
 	// Accumulator for node-to-node forces, zeroed each frame
 	const nodeForces = new Float32Array(NODE_COUNT * 2)
+	// Charge timers: countdown to next charge. Durations: remaining charge frames.
+	const chargeTimers = new Float32Array(NODE_COUNT)
+	const chargeDurations = new Float32Array(NODE_COUNT)
+
+	// Grid placement 15x10 = 150 nodes, each cell ~120x110 units.
+	const GRID_COLS = 15
+	const GRID_ROWS = 10
+	const cellW = (BOUNDS_X * 2) / GRID_COLS
+	const cellH = (BOUNDS_Y * 2) / GRID_ROWS
+	const JITTER_X = cellW * 0.18
+	const JITTER_Y = cellH * 0.18
+
+	// Shuffle cell order so node indices don't follow a boring raster pattern
+	const cellOrder = Array.from({ length: NODE_COUNT }, (_, k) => k)
+	for (let k = NODE_COUNT - 1; k > 0; k--) {
+		const j = Math.floor(Math.random() * (k + 1))
+		const tmp = cellOrder[k]
+		cellOrder[k] = cellOrder[j]
+		cellOrder[j] = tmp
+	}
 
 	for (let i = 0; i < NODE_COUNT; i++) {
-		positions[i * 3] = (Math.random() - 0.5) * BOUNDS_X * 2
-		positions[i * 3 + 1] = (Math.random() - 0.5) * BOUNDS_Y * 2
+		const cell = cellOrder[i]
+		const col = cell % GRID_COLS
+		const row = Math.floor(cell / GRID_COLS)
+
+		positions[i * 3] = -BOUNDS_X + cellW * (col + 0.5) + (Math.random() - 0.5) * 2 * JITTER_X
+		positions[i * 3 + 1] =
+			-BOUNDS_Y + cellH * (row + 0.5) + (Math.random() - 0.5) * 2 * JITTER_Y
 		positions[i * 3 + 2] = (Math.random() - 0.5) * BOUNDS_Z * 2
 
-		// Each node drifts at its own angle that slowly rotates
 		driftAngles[i] = Math.random() * Math.PI * 2
-		// Random sign + small magnitude so paths curve gently
 		driftSpeeds[i] = (Math.random() < 0.5 ? 1 : -1) * (0.002 + Math.random() * 0.007)
 		nodeSpeeds[i] = 0.1 + Math.random() * 0.15
 
 		baseVelocities[i * 2] = Math.cos(driftAngles[i]) * nodeSpeeds[i]
 		baseVelocities[i * 2 + 1] = Math.sin(driftAngles[i]) * nodeSpeeds[i]
+
+		// Stagger initial timers so nodes don't all charge at once
+		chargeTimers[i] = Math.random() * CHARGE_INTERVAL_MAX
 	}
 
 	const _projVec = new THREE.Vector3()
@@ -203,8 +236,20 @@ onMounted(() => {
 		}
 
 		// Update drift angles -> curved organic base paths
+		// Freeze angle during charge so node resumes same direction after
 		for (let i = 0; i < NODE_COUNT; i++) {
-			driftAngles[i] += driftSpeeds[i]
+			if (chargeDurations[i] > 0) {
+				chargeDurations[i]--
+			} else {
+				chargeTimers[i]--
+				if (chargeTimers[i] <= 0) {
+					chargeTimers[i] =
+						CHARGE_INTERVAL_MIN +
+						Math.random() * (CHARGE_INTERVAL_MAX - CHARGE_INTERVAL_MIN)
+					chargeDurations[i] = CHARGE_DURATION_FRAMES
+				}
+				driftAngles[i] += driftSpeeds[i]
+			}
 			baseVelocities[i * 2] = Math.cos(driftAngles[i]) * nodeSpeeds[i]
 			baseVelocities[i * 2 + 1] = Math.sin(driftAngles[i]) * nodeSpeeds[i]
 		}
@@ -242,6 +287,18 @@ onMounted(() => {
 			const px = positions[i * 3]
 			const py = positions[i * 3 + 1]
 			const pz = positions[i * 3 + 2]
+
+			// Charge: override base velocity to head toward cursor at fixed speed
+			if (chargeDurations[i] > 0) {
+				const cdx = mouseWorldX - px
+				const cdy = mouseWorldY - py
+				const cdist = Math.sqrt(cdx * cdx + cdy * cdy)
+				if (cdist > 1) {
+					const spd = nodeSpeeds[i] * CHARGE_SPEED_MULT
+					baseVelocities[i * 2] = (cdx / cdist) * spd
+					baseVelocities[i * 2 + 1] = (cdy / cdist) * spd
+				}
+			}
 
 			// Z-distance factor: nodes far from camera plane react less to mouse
 			const dzCamera = pz - camera.position.z
@@ -339,32 +396,50 @@ onMounted(() => {
 
 				const dx = positions[i * 3] - positions[j * 3]
 				const dy = positions[i * 3 + 1] - positions[j * 3 + 1]
-				const dz = positions[i * 3 + 2] - positions[j * 3 + 2]
+				const xy2 = dx * dx + dy * dy
 
-				if (dx * dx + dy * dy + dz * dz < threshold2) {
-					const base = lineCount * 6
-					linePos[base] = positions[i * 3]
-					linePos[base + 1] = positions[i * 3 + 1]
-					linePos[base + 2] = positions[i * 3 + 2]
-					linePos[base + 3] = positions[j * 3]
-					linePos[base + 4] = positions[j * 3 + 1]
-					linePos[base + 5] = positions[j * 3 + 2]
+				if (xy2 >= threshold2) continue
 
-					// Brighten lines near cursor
-					const midX = (positions[i * 3] + positions[j * 3]) / 2
-					const midY = (positions[i * 3 + 1] + positions[j * 3 + 1]) / 2
-					const mdx = midX - mouseWorldX
-					const mdy = midY - mouseWorldY
-					const mDist2 = mdx * mdx + mdy * mdy
-					const brightness =
-						mDist2 < HIGHLIGHT_R * HIGHLIGHT_R
-							? 0.175 + (1 - Math.sqrt(mDist2) / HIGHLIGHT_R) * 0.825
-							: 0.175
+				const base = lineCount * 6
+				linePos[base] = positions[i * 3]
+				linePos[base + 1] = positions[i * 3 + 1]
+				linePos[base + 2] = positions[i * 3 + 2]
+				linePos[base + 3] = positions[j * 3]
+				linePos[base + 4] = positions[j * 3 + 1]
+				linePos[base + 5] = positions[j * 3 + 2]
 
-					for (let c = 0; c < 6; c++) lineColors[base + c] = brightness
+				// Mouse highlight on midpoint
+				const midX = (positions[i * 3] + positions[j * 3]) / 2
+				const midY = (positions[i * 3 + 1] + positions[j * 3 + 1]) / 2
+				const mdx = midX - mouseWorldX
+				const mdy = midY - mouseWorldY
+				const mDist2 = mdx * mdx + mdy * mdy
+				const mouseBoost =
+					mDist2 < HIGHLIGHT_R * HIGHLIGHT_R
+						? 0.175 + (1 - Math.sqrt(mDist2) / HIGHLIGHT_R) * 0.825
+						: 0.175
 
-					lineCount++
-				}
+				// Per-vertex depth fade: near camera = bright, far = dim
+				const depthFadeI = Math.max(
+					0.06,
+					1 - (camera.position.z - positions[i * 3 + 2]) / (BOUNDS_Z * 2)
+				)
+				const depthFadeJ = Math.max(
+					0.06,
+					1 - (camera.position.z - positions[j * 3 + 2]) / (BOUNDS_Z * 2)
+				)
+
+				const bI = mouseBoost * depthFadeI
+				const bJ = mouseBoost * depthFadeJ
+
+				lineColors[base] = bI
+				lineColors[base + 1] = bI
+				lineColors[base + 2] = bI
+				lineColors[base + 3] = bJ
+				lineColors[base + 4] = bJ
+				lineColors[base + 5] = bJ
+
+				lineCount++
 			}
 		}
 
