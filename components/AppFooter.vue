@@ -47,7 +47,7 @@
 					Built with <span class="text-primary">Nuxt 3</span>,
 					<span class="text-secondary">Tailwind CSS</span> &amp;
 					<span class="text-primary">Three.js</span> and ofc
-					<font-awesome-icon icon="heart" class="text-red-500" /> on
+					<font-awesome-icon icon="heart" class="text-red-500" /> under
 					<button
 						@click="showLicenseModal = true"
 						class="inline-flex items-center gap-1 transition hover:text-primary">
