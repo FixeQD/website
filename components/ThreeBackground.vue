@@ -12,6 +12,9 @@ let mouseX = 0,
 	mouseY = 0
 let scrollY = 0,
 	targetScrollY = 0
+let scrollVelocity = 0,
+	lastTargetScrollY = 0
+let cameraRoll = 0
 let lookTargetX = 0,
 	lookTargetY = 0
 let isPointerDown = false
@@ -220,8 +223,10 @@ onMounted(() => {
 	const animate = () => {
 		animationId = requestAnimationFrame(animate)
 
-		// Scroll-driven camera fly-through
+		scrollVelocity += (targetScrollY - lastTargetScrollY - scrollVelocity) * 0.25
+		lastTargetScrollY = targetScrollY
 		scrollY += (targetScrollY - scrollY) * 0.06
+		// Momentum-based scroll: coasts smoothly on stepped wheels
 		const maxScroll = document.documentElement.scrollHeight - window.innerHeight
 		const scrollProgress = maxScroll > 0 ? scrollY / maxScroll : 0
 		camera.position.z = 500 - scrollProgress * BOUNDS_Z * 1.6
@@ -452,7 +457,17 @@ onMounted(() => {
 		lookTargetY += (-mouseY * 80 - lookTargetY) * 0.05
 		camera.position.x += (mouseX * 30 - camera.position.x) * 0.04
 		camera.position.y += (-mouseY * 30 - camera.position.y) * 0.04
+
+		// Roll on scroll
+		cameraRoll += (-scrollVelocity * 0.0018 - cameraRoll) * 0.07
+		camera.up.set(Math.sin(cameraRoll), Math.cos(cameraRoll), 0)
+
 		camera.lookAt(lookTargetX, lookTargetY, camera.position.z - 300)
+
+		// FOV warp: widens on fast scroll, snaps back when stopped
+		const targetFov = 60 + Math.min(Math.abs(scrollVelocity) * 0.3, 28)
+		camera.fov += (targetFov - camera.fov) * 0.07
+		camera.updateProjectionMatrix()
 
 		renderer.render(scene, camera)
 	}
