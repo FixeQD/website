@@ -32,7 +32,7 @@ onMounted(() => {
 	renderer.setClearColor(0x000000, 0)
 
 	const NODE_COUNT = 150
-	const CONNECT_DIST = 85
+	const CONNECT_DIST = 100
 	const MAX_LINES = 280
 	const MAX_SCREEN_DIST_SQ = 0.75 * 0.75
 
