@@ -16,7 +16,8 @@ interface Skill {
 	color: string
 }
 
-// cfg
+// --- constants
+
 const RADIUS = 150
 const ICON_SIZE = 56
 const EXPANDED_WIDTH = 150
@@ -26,10 +27,12 @@ const PUSH = 0.06
 const FRICTION = 0.92
 const FLOAT_AMP = 5
 const FLOAT_SPEED = 0.001
-const FIXED_DT = 1 / 60 // 60fps fixed step
-const MAX_STEPS = 4 // max physics steps per frame
+const FIXED_DT = 1 / 60
+const MAX_STEPS = 4
 
 export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
+	// --- state
+
 	const hoveredIndex = ref<number | null>(null)
 	const states = ref<SkillState[]>([])
 	const time = ref(0)
@@ -37,38 +40,30 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 	let accumulator = 0
 	let lastTs = 0
 
+	// --- init
+
 	const initStates = (count: number) => {
 		const arr: SkillState[] = []
 		for (let i = 0; i < count; i++) {
 			const angle = (i / count) * 2 * Math.PI - Math.PI / 2
 			const x = Math.cos(angle) * RADIUS
 			const y = Math.sin(angle) * RADIUS
-			arr.push({
-				baseX: x,
-				baseY: y,
-				x,
-				y,
-				vx: 0,
-				vy: 0,
-				angle,
-			})
+			arr.push({ baseX: x, baseY: y, x, y, vx: 0, vy: 0, angle })
 		}
 		states.value = arr
 	}
 
+	// --- physics helpers
+
 	const getBox = (idx: number) => {
 		const s = states.value[idx]
 		if (!s) return { left: 0, right: 0, top: 0, bottom: 0 }
-
-		const isExpanded = hoveredIndex.value === idx
-		const w = isExpanded ? EXPANDED_WIDTH : ICON_SIZE
-		const h = ICON_SIZE
-
+		const w = hoveredIndex.value === idx ? EXPANDED_WIDTH : ICON_SIZE
 		return {
 			left: s.x - w / 2,
 			right: s.x + w / 2,
-			top: s.y - h / 2,
-			bottom: s.y + h / 2,
+			top: s.y - ICON_SIZE / 2,
+			bottom: s.y + ICON_SIZE / 2,
 		}
 	}
 
@@ -81,19 +76,16 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 
 		const overlapX = Math.min(boxA.right, boxB.right) - Math.max(boxA.left, boxB.left) + MIN_GAP
 		const overlapY = Math.min(boxA.bottom, boxB.bottom) - Math.max(boxA.top, boxB.top) + MIN_GAP
-
 		if (overlapX <= 0 || overlapY <= 0) return null
 
 		const dx = sB.x - sA.x
 		const dy = sB.y - sA.y
 		const dist = Math.sqrt(dx * dx + dy * dy) || 1
 
-		return {
-			nx: dx / dist,
-			ny: dy / dist,
-			overlap: Math.max(overlapX, overlapY),
-		}
+		return { nx: dx / dist, ny: dy / dist, overlap: Math.max(overlapX, overlapY) }
 	}
+
+	// --- physics step
 
 	const physicsStep = () => {
 		const arr = states.value
@@ -102,24 +94,18 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 
 		time.value += FIXED_DT * 1000
 		const hasHover = hoveredIndex.value !== null
-
 		const pushed = new Array(total).fill(false)
 
 		if (hasHover) {
 			for (let pass = 0; pass < 3; pass++) {
 				for (let i = 0; i < total; i++) {
 					if (hoveredIndex.value === i) continue
-
 					for (let j = 0; j < total; j++) {
 						if (i === j) continue
-
 						const overlap = getOverlap(j, i)
 						if (!overlap) continue
-
 						const isHoveredJ = hoveredIndex.value === j
 						if (!isHoveredJ && !pushed[j]) continue
-
-						// push i away
 						const force = overlap.overlap * PUSH
 						arr[i].vx += overlap.nx * force
 						arr[i].vy += overlap.ny * force
@@ -129,7 +115,6 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 			}
 		}
 
-		// spring + integrate for each
 		for (let i = 0; i < total; i++) {
 			const s = arr[i]
 
@@ -141,7 +126,6 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 				continue
 			}
 
-			// float when idle
 			let floatY = 0
 			if (!hasHover) {
 				const phase = i * 0.6
@@ -149,41 +133,33 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 				floatY = Math.sin(time.value * FLOAT_SPEED * spd + phase) * FLOAT_AMP
 			}
 
-			// spring to base
 			if (!pushed[i]) {
-				const tx = s.baseX
-				const ty = s.baseY + floatY
-				s.vx += (tx - s.x) * SPRING
-				s.vy += (ty - s.y) * SPRING
+				s.vx += (s.baseX - s.x) * SPRING
+				s.vy += (s.baseY + floatY - s.y) * SPRING
 			}
 
-			// friction
 			s.vx *= FRICTION
 			s.vy *= FRICTION
-
-			// integrate
 			s.x += s.vx
 			s.y += s.vy
 		}
 	}
 
+	// --- loop
+
 	const loop = (ts: number) => {
 		if (lastTs === 0) lastTs = ts
-		const frameTime = Math.min((ts - lastTs) / 1000, 0.1) // cap at 100ms
+		const frameTime = Math.min((ts - lastTs) / 1000, 0.1)
 		lastTs = ts
 
 		accumulator += frameTime
 		let steps = 0
-
 		while (accumulator >= FIXED_DT && steps < MAX_STEPS) {
 			physicsStep()
 			accumulator -= FIXED_DT
 			steps++
 		}
-
-		if (accumulator > FIXED_DT * 2) {
-			accumulator = 0
-		}
+		if (accumulator > FIXED_DT * 2) accumulator = 0
 
 		frameId = requestAnimationFrame(loop)
 	}
@@ -211,24 +187,20 @@ export function useSkillOrbit(skills: ComputedRef<Skill[]> | Ref<Skill[]>) {
 		(count) => {
 			if (count > 0) {
 				initStates(count)
-				if (typeof window !== 'undefined') {
-					start()
-				}
+				if (typeof window !== 'undefined') start()
 			}
 		},
 		{ immediate: true }
 	)
 
-	onUnmounted(() => {
-		stop()
-	})
+	onUnmounted(stop)
+
+	// --- public api
 
 	const getIconStyle = (index: number) => {
 		const s = states.value[index]
 		if (!s) return {}
-		return {
-			transform: `translate(calc(-50% + ${s.x}px), calc(-50% + ${s.y}px))`,
-		}
+		return { transform: `translate(calc(-50% + ${s.x}px), calc(-50% + ${s.y}px))` }
 	}
 
 	const getExpandDirection = (index: number): 'row' | 'row-reverse' => {

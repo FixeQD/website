@@ -16,10 +16,11 @@ interface SkillBody {
 	angle: number
 	radius: number
 	isDragging: boolean
-	dragIntensity: number // 0-1 for glow effect
+	dragIntensity: number
 }
 
-// cfg
+// --- constants
+
 const ORBIT_RADIUS = 110
 const ICON_RADIUS = 26
 const SPRING = 0.08
@@ -28,7 +29,6 @@ const THROW_MULTIPLIER = 12
 const GLOW_DECAY = 0.95
 const MIN_VELOCITY = 0.1
 const COLLISION_PUSH = 0.5
-
 const FIXED_DT = 1 / 60
 const MAX_STEPS = 4
 
@@ -36,6 +36,8 @@ export function useMobileSkillPhysics(
 	skills: ComputedRef<Skill[]> | Ref<Skill[]>,
 	containerRef: Ref<HTMLElement | null>
 ) {
+	// --- state
+
 	const bodies = ref<SkillBody[]>([])
 	const centerGlowIntensity = ref(0)
 	let frameId: number | null = null
@@ -46,6 +48,8 @@ export function useMobileSkillPhysics(
 	let dragIndex: number | null = null
 	let lastPointerPos = { x: 0, y: 0 }
 	let lastPointerTime = 0
+
+	// --- init
 
 	const initBodies = () => {
 		if (!containerRef.value) return
@@ -78,6 +82,8 @@ export function useMobileSkillPhysics(
 		bodies.value = arr
 	}
 
+	// --- physics
+
 	const resolveCollisions = () => {
 		const arr = bodies.value
 		const len = arr.length
@@ -95,10 +101,8 @@ export function useMobileSkillPhysics(
 				if (dist < minDist && dist > 0) {
 					const nx = dx / dist
 					const ny = dy / dist
-					const overlap = minDist - dist
-
-					const pushX = (nx * overlap) / 2
-					const pushY = (ny * overlap) / 2
+					const pushX = (nx * (minDist - dist)) / 2
+					const pushY = (ny * (minDist - dist)) / 2
 
 					if (!a.isDragging) {
 						a.x -= pushX
@@ -110,10 +114,7 @@ export function useMobileSkillPhysics(
 					}
 
 					if (!a.isDragging && !b.isDragging) {
-						const dvx = a.vx - b.vx
-						const dvy = a.vy - b.vy
-						const dot = dvx * nx + dvy * ny
-
+						const dot = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny
 						if (dot > 0) {
 							const impulse = dot * COLLISION_PUSH
 							a.vx -= impulse * nx
@@ -133,35 +134,24 @@ export function useMobileSkillPhysics(
 
 		for (const body of arr) {
 			if (body.isDragging) {
-				// calc distance from base for glow intensity
 				const dx = body.x - body.baseX
 				const dy = body.y - body.baseY
-				const dist = Math.sqrt(dx * dx + dy * dy)
-				body.dragIntensity = Math.min(1, dist / 100)
+				body.dragIntensity = Math.min(1, Math.sqrt(dx * dx + dy * dy) / 100)
 				maxIntensity = Math.max(maxIntensity, body.dragIntensity)
 				continue
 			}
 
-			// spring force back to orbit position
-			const dx = body.baseX - body.x
-			const dy = body.baseY - body.y
-
-			body.vx += dx * SPRING
-			body.vy += dy * SPRING
-
-			// friction
+			body.vx += (body.baseX - body.x) * SPRING
+			body.vy += (body.baseY - body.y) * SPRING
 			body.vx *= FRICTION
 			body.vy *= FRICTION
 
-			// clamp tiny velocities
 			if (Math.abs(body.vx) < MIN_VELOCITY) body.vx = 0
 			if (Math.abs(body.vy) < MIN_VELOCITY) body.vy = 0
 
-			// integrate
 			body.x += body.vx
 			body.y += body.vy
 
-			// decay glow
 			body.dragIntensity *= GLOW_DECAY
 			if (body.dragIntensity < 0.01) body.dragIntensity = 0
 
@@ -169,28 +159,24 @@ export function useMobileSkillPhysics(
 		}
 
 		centerGlowIntensity.value = maxIntensity
-
 		resolveCollisions()
 	}
 
+	// --- loop
+
 	const loop = (ts: number) => {
 		if (lastTs === 0) lastTs = ts
-		const frameTime = Math.min((ts - lastTs) / 1000, 0.1) // cap at 100ms
+		const frameTime = Math.min((ts - lastTs) / 1000, 0.1)
 		lastTs = ts
 
 		accumulator += frameTime
 		let steps = 0
-
 		while (accumulator >= FIXED_DT && steps < MAX_STEPS) {
 			physicsStep()
 			accumulator -= FIXED_DT
 			steps++
 		}
-
-		// prevent spiral of death
-		if (accumulator > FIXED_DT * 2) {
-			accumulator = 0
-		}
+		if (accumulator > FIXED_DT * 2) accumulator = 0
 
 		frameId = requestAnimationFrame(loop)
 	}
@@ -210,6 +196,8 @@ export function useMobileSkillPhysics(
 		}
 	}
 
+	// --- input
+
 	const getPointerPos = (e: TouchEvent | MouseEvent) => {
 		if (!containerRef.value) return { x: 0, y: 0 }
 		const rect = containerRef.value.getBoundingClientRect()
@@ -228,10 +216,7 @@ export function useMobileSkillPhysics(
 			return { x: 0, y: 0 }
 		}
 
-		return {
-			x: clientX - rect.left,
-			y: clientY - rect.top,
-		}
+		return { x: clientX - rect.left, y: clientY - rect.top }
 	}
 
 	const findBodyAtPos = (x: number, y: number): number | null => {
@@ -239,10 +224,7 @@ export function useMobileSkillPhysics(
 			const b = bodies.value[i]
 			const dx = x - b.x
 			const dy = y - b.y
-			// larger hit area for touch
-			if (dx * dx + dy * dy < (b.radius + 12) * (b.radius + 12)) {
-				return i
-			}
+			if (dx * dx + dy * dy < (b.radius + 12) ** 2) return i
 		}
 		return null
 	}
@@ -250,7 +232,6 @@ export function useMobileSkillPhysics(
 	const onPointerDown = (e: TouchEvent | MouseEvent) => {
 		const pos = getPointerPos(e)
 		const idx = findBodyAtPos(pos.x, pos.y)
-
 		if (idx !== null) {
 			dragIndex = idx
 			bodies.value[idx].isDragging = true
@@ -263,23 +244,18 @@ export function useMobileSkillPhysics(
 
 	const onPointerMove = (e: TouchEvent | MouseEvent) => {
 		if (dragIndex === null) return
-
 		const pos = getPointerPos(e)
 		const body = bodies.value[dragIndex]
-
 		if (body) {
 			body.x = pos.x
 			body.y = pos.y
-
-			const now = performance.now()
-			const dt = now - lastPointerTime
+			const dt = performance.now() - lastPointerTime
 			if (dt > 0) {
 				body.vx = ((pos.x - lastPointerPos.x) / dt) * THROW_MULTIPLIER
 				body.vy = ((pos.y - lastPointerPos.y) / dt) * THROW_MULTIPLIER
 			}
-
 			lastPointerPos = pos
-			lastPointerTime = now
+			lastPointerTime = performance.now()
 		}
 	}
 
@@ -292,14 +268,11 @@ export function useMobileSkillPhysics(
 
 	const bindEvents = () => {
 		if (!containerRef.value) return
-
 		const el = containerRef.value
-
 		el.addEventListener('touchstart', onPointerDown, { passive: true })
 		window.addEventListener('touchmove', onPointerMove, { passive: true })
 		window.addEventListener('touchend', onPointerUp)
 		window.addEventListener('touchcancel', onPointerUp)
-
 		el.addEventListener('mousedown', onPointerDown)
 		window.addEventListener('mousemove', onPointerMove)
 		window.addEventListener('mouseup', onPointerUp)
@@ -307,23 +280,21 @@ export function useMobileSkillPhysics(
 
 	const unbindEvents = () => {
 		if (!containerRef.value) return
-
 		const el = containerRef.value
-
 		el.removeEventListener('touchstart', onPointerDown)
 		window.removeEventListener('touchmove', onPointerMove)
 		window.removeEventListener('touchend', onPointerUp)
 		window.removeEventListener('touchcancel', onPointerUp)
-
 		el.removeEventListener('mousedown', onPointerDown)
 		window.removeEventListener('mousemove', onPointerMove)
 		window.removeEventListener('mouseup', onPointerUp)
 	}
 
+	// --- public api
+
 	const getBodyStyle = (index: number) => {
 		const body = bodies.value[index]
 		if (!body) return {}
-
 		return {
 			transform: `translate(${body.x - body.radius}px, ${body.y - body.radius}px)`,
 			width: `${body.radius * 2}px`,
