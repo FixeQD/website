@@ -11,6 +11,7 @@
 			<HeroSection :data="data" />
 			<AboutSection :data="data" />
 			<ProjectsSection :projects="projects" />
+			<CookingSection />
 		</main>
 
 		<AppFooter :data="data" />
