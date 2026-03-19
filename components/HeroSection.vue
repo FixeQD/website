@@ -224,7 +224,7 @@ const discordProfileUrl = ref('')
 const orbitContainer = ref<HTMLElement | null>(null)
 const mobilePlaygroundRef = ref<HTMLElement | null>(null)
 
-const texts = ['Full Stack Developer', 'Linux Enthusiast', 'Mobile Developer', 'Problem Solver']
+const texts = ['Full Stack Developer', 'Linux Enthusiast', 'Mobile Developer', 'Problem Solver', 'em-dash lover']
 let textIndex = 0
 let charIndex = 0
 let isDeleting = false
