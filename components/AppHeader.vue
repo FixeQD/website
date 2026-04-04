@@ -1,7 +1,9 @@
 <template>
+	<div id="lockdown-countdown" ref="bannerRef" class="absolute left-0 right-0 top-0 z-[60] w-full transition-opacity duration-500" :style="{ opacity: showBanner ? 1 : 0 }"></div>
 	<div
-		class="fixed left-0 right-0 z-50 flex flex-col items-center transition-all duration-500 ease-in-out"
-		:class="scrolled ? 'top-3' : 'top-0'">
+		class="fixed left-0 right-0 top-0 z-50 flex flex-col items-center"
+		:class="enableTransition ? 'transition-transform duration-500 ease-in-out' : ''"
+		:style="{ transform: `translateY(${scrolled ? 12 : bannerHeight}px)` }">
 		<nav
 			class="flex w-full items-center justify-between overflow-hidden border transition-all duration-500 ease-in-out"
 			:class="scrolled ? 'rounded-2xl px-5 py-2.5' : 'rounded-none px-6 py-4'"
@@ -53,6 +55,15 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 
+useHead({
+	script: [
+		{
+			src: 'https://keepandroidopen.org/banner.js?size=minimal&id=lockdown-countdown&animation=off',
+			defer: true,
+		},
+	],
+})
+
 const links = [
 	{ href: '#about', label: 'About' },
 	{ href: '#projects', label: 'Projects' },
@@ -61,17 +72,47 @@ const links = [
 
 const scrolled = ref(false)
 const mobileMenuOpen = ref(false)
+const bannerRef = ref(null)
+const bannerHeight = ref(0)
+const enableTransition = ref(false)
+const showBanner = ref(false)
+let resizeObserver = null
 
 const onScroll = () => {
 	scrolled.value = window.scrollY > 60
+	if (window.scrollY > 0) {
+		enableTransition.value = true
+	}
 }
 
 onMounted(() => {
 	onScroll()
 	window.addEventListener('scroll', onScroll, { passive: true })
+
+	if (bannerRef.value) {
+		resizeObserver = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				const newHeight = entry.target.offsetHeight
+				if (newHeight > 0) {
+					enableTransition.value = true
+					setTimeout(() => {
+						bannerHeight.value = newHeight
+						showBanner.value = true
+					}, 50)
+				} else {
+					bannerHeight.value = 0
+					showBanner.value = false
+				}
+			}
+		})
+		resizeObserver.observe(bannerRef.value)
+	}
 })
 
 onUnmounted(() => {
 	window.removeEventListener('scroll', onScroll)
+	if (resizeObserver) {
+		resizeObserver.disconnect()
+	}
 })
 </script>
