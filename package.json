@@ -1,32 +1,24 @@
 {
-	"name": "fixeq-portfolio",
-	"version": "1.0.0",
-	"private": true,
-	"type": "module",
-	"scripts": {
-		"dev": "nuxt dev",
-		"build": "nuxt build",
-		"generate": "nuxt generate",
-		"preview": "nuxt preview",
-		"postinstall": "nuxt prepare"
-	},
-	"dependencies": {
-		"@fortawesome/fontawesome-svg-core": "^7.1.0",
-		"@fortawesome/free-brands-svg-icons": "^7.1.0",
-		"@fortawesome/free-solid-svg-icons": "^7.1.0",
-		"@fortawesome/vue-fontawesome": "^3.1.2",
-		"@types/three": "^0.181.0",
-		"@vueuse/core": "^14.1.0",
-		"nuxt": "^3.15.1",
-		"nuxt-og-image": "^5.1.13",
-		"prettier": "^3.7.4",
-		"prettier-plugin-tailwindcss": "^0.7.2",
-		"terser": "^5.46.0",
-		"three": "^0.181.2",
-		"vue": "^3.5.13"
-	},
-	"devDependencies": {
-		"@nuxt/icon": "^1.10.0",
-		"@nuxtjs/tailwindcss": "^6.12.2"
-	}
+  "name": "fixeq",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.177.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.3.0"
+  }
 }
