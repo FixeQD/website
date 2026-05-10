@@ -3,7 +3,7 @@ export const me = {
   handle: 'FixeQ',
   location: 'Poland',
   bio: "Self-taught dev from Poland. Started with basic HTML, moved to web apps, then mobile, then somehow ended up writing Rust. I spend a lot of time optimizing things that didn't need optimizing and I'm okay with that.",
-  shortBio: "Self-taught. Full stack. Arch, btw.",
+  shortBio: "Self-taught. Full stack. ~~Arch~~ Artix, btw.",
   stats: [
     { label: 'Experience', value: '3+ yrs' },
     { label: 'Projects shipped', value: '25+' },
@@ -29,7 +29,7 @@ export const achievements = [
     color: '#f59e0b',
   },
   {
-    title: 'Arch Linux',
+    title: '~~Arch~~ Artix Linux',
     desc: 'btw.',
     color: '#1793d1',
   },
@@ -72,7 +72,7 @@ export const projects = [
 export const typewriterWords = [
   'Full Stack Developer',
   'Linux Enthusiast',
-  'Arch, btw',
+  '~~Arch~~ Artix, btw',
   'Rust Enjoyer',
   'Problem Solver',
 ]

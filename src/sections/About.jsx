@@ -1,6 +1,7 @@
 import { me, achievements, skills } from "../data";
 import { bridge } from "../utils/bridge";
 import { useGithubStats } from "../hooks";
+import { parseMarkdown } from "../utils/markdown";
 
 const glass = {
   background: "rgba(6,6,9,0.62)",
@@ -76,7 +77,7 @@ export default function AboutContent({ progress }) {
               maxWidth: 620,
             }}
           >
-            {me.bio}
+            {parseMarkdown(me.bio)}
           </p>
 
           {/* stats row */}
@@ -313,7 +314,7 @@ export default function AboutContent({ progress }) {
                   color: "#e2e2f0",
                 }}
               >
-                {a.title}
+                {parseMarkdown(a.title)}
               </div>
               <div
                 style={{
@@ -324,7 +325,7 @@ export default function AboutContent({ progress }) {
                   color: "#7070906",
                 }}
               >
-                {a.desc}
+                {parseMarkdown(a.desc)}
               </div>
             </div>
           ))}

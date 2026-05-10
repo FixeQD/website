@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { me, socials, typewriterWords } from "../data";
 import { bridge } from "../utils/bridge";
+import { parseMarkdown } from "../utils/markdown";
 
 function useTypewriter(words) {
   const [text, setText] = useState("");
@@ -115,7 +116,7 @@ export default function HeroContent({ progress }) {
             alignItems: "center",
           }}
         >
-          {word}
+          {parseMarkdown(word)}
           <span className="cursor" />
         </div>
 
@@ -153,7 +154,7 @@ export default function HeroContent({ progress }) {
             marginBottom: "2.4rem",
           }}
         >
-          {me.shortBio}
+          {parseMarkdown(me.shortBio)}
         </p>
 
         <div
