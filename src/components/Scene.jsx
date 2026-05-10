@@ -177,7 +177,7 @@ export default function Scene() {
       const color = HUB_COLORS[i];
       const group = new THREE.Group();
       const wires = [];
-      
+
       const matCore = new THREE.MeshBasicMaterial({ color: 0x04040a, transparent: true, opacity: 0.85 });
       const matWire = new THREE.MeshBasicMaterial({
         color, wireframe: true, transparent: true, opacity: 0.25,
@@ -194,12 +194,12 @@ export default function Scene() {
         const wire2 = new THREE.Mesh(geom, matWire2);
         wire.scale.setScalar(1.05);
         wire2.scale.setScalar(1.15);
-        
+
         core.position.y = wire.position.y = wire2.position.y = y;
         core.rotation.set(rx, ry, 0);
         wire.rotation.set(rx, ry, 0);
         wire2.rotation.set(rx, ry, 0);
-        
+
         group.add(core, wire, wire2);
         wires.push({ wire, wire2 });
       };
@@ -249,11 +249,15 @@ export default function Scene() {
     const camTarget = new THREE.Vector3();
     const lookSmooth = HUBS[0].clone();
     const lookTarget = new THREE.Vector3();
+    const tangentSmooth = new THREE.Vector3(0, 0, -1);
+    const upVec = new THREE.Vector3(0, 1, 0);
+    let smoothRoll = 0;
 
     let raf, time = 0;
     let lastScroll = 0;
     let scrollVel = 0;
     let boost = 0;
+    let prevTangent = new THREE.Vector3(0, 0, -1);
 
     const unbind = bridge.subscribe((type) => {
       if (type === "hover") boost = 1.0;
@@ -284,19 +288,42 @@ export default function Scene() {
 
       const t = raw / (HUBS.length - 1);
       camTarget.copy(camCurve.getPoint(t));
-      lookTarget.copy(hubCurve.getPoint(t));
+
+      const camTangent = camCurve.getTangent(t).normalize();
+
+      const lookAheadT = Math.min(t + 0.06, 1.0);
+      const aheadCamPoint = camCurve.getPoint(lookAheadT);
+      const aheadHubPoint = hubCurve.getPoint(lookAheadT);
 
       sMx += (tMx - sMx) * 0.03;
       sMy += (tMy - sMy) * 0.03;
 
       const spd = noMotion ? 1 : 0.02;
       camSmooth.lerp(camTarget, spd);
-      lookSmooth.lerp(lookTarget, spd * 1.6);
 
       camera.position.copy(camSmooth);
       camera.position.x += sMx * 28;
       camera.position.y += sMy * 18;
+
+      if (t >= 0.99) {
+        lookTarget.copy(camTarget).add(camTangent.clone().multiplyScalar(300));
+      } else {
+        lookTarget.copy(aheadCamPoint).lerp(aheadHubPoint, 0.5);
+      }
+
+      lookSmooth.lerp(lookTarget, spd * 1.2);
       camera.lookAt(lookSmooth);
+
+      const aheadTangent = camCurve.getTangent(lookAheadT).normalize();
+      const cross = new THREE.Vector3().crossVectors(camTangent, aheadTangent);
+
+      const velocityMult = Math.min(scrollVel + 0.2, 1.5);
+      let targetRoll = -cross.y * 4.0 * velocityMult;
+
+      targetRoll = Math.max(-0.45, Math.min(0.45, targetRoll));
+
+      smoothRoll += (targetRoll - smoothRoll) * 0.03;
+      camera.rotateZ(smoothRoll);
 
       const activeIdx = Math.min(Math.round(raw), HUBS.length - 1);
 
