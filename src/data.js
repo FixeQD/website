@@ -60,14 +60,6 @@ export const skills = [
 
 export const projects = [
   {
-    name: 'Postail',
-    desc: 'Secure desktop email client. Rust backend via Tauri, React + Zustand frontend',
-    tags: ['Rust', 'Tauri', 'React', 'TypeScript'],
-    color: '#ce422b',
-    url: null,
-    wip: true,
-  },
-  {
     name: 'Spicetify Cat Jam Synced',
     desc: 'A Spicetify extension that syncs a cat head-bobbing animation to the actual beat of the song. TypeScript + Bun.',
     tags: ['TypeScript', 'Bun', 'Spicetify'],

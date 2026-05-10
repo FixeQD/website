@@ -1,7 +1,31 @@
+import { useEffect, useState } from "react";
 import { bridge } from "../utils/bridge";
+
+const glass = {
+  background: "rgba(6,6,9,0.5)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
+  border: "1px solid rgba(255,255,255,0.06)",
+  borderRadius: "16px",
+};
 
 export default function LabContent({ progress }) {
   const onInteraction = () => bridge.emit("hover");
+  const [scramble, setScramble] = useState("ENCRYPTED_PAYLOAD_0X9F");
+
+  useEffect(() => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()";
+    const int = setInterval(() => {
+      if (Math.random() > 0.2) {
+        let str = "";
+        for (let i = 0; i < 22; i++) {
+          str += chars[Math.floor(Math.random() * chars.length)];
+        }
+        setScramble(str);
+      }
+    }, 60);
+    return () => clearInterval(int);
+  }, []);
 
   return (
     <div
@@ -11,97 +35,178 @@ export default function LabContent({ progress }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        textAlign: "center",
-        padding: "5rem 2rem 2rem",
+        padding: "2rem",
         opacity: "var(--opacity-3, 0)",
         transform: "translateY(var(--translate-3, 0px))",
         pointerEvents: "var(--events-3, none)",
       }}
     >
-      <div>
-        {/* live badge */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          border: '1px solid rgba(var(--accent-rgb), 0.22)',
-          borderRadius: '100px',
-          padding: '0.3rem 0.9rem',
-          marginBottom: '2.5rem',
-        }}
+      <div
         onMouseEnter={onInteraction}
+        style={{
+          ...glass,
+          width: "100%",
+          maxWidth: 640,
+          padding: "clamp(2rem, 5vw, 3.5rem)",
+          position: "relative",
+          overflow: "hidden",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.4)",
+        }}
+      >
+        {/* Glow */}
+        <div
+          style={{
+            position: "absolute",
+            top: "-50%",
+            left: "-10%",
+            width: "120%",
+            height: "150%",
+            background: "radial-gradient(ellipse at 50% 0%, rgba(var(--accent-rgb), 0.12) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Header */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+            paddingBottom: "1.5rem",
+            marginBottom: "2rem",
+            position: "relative",
+          }}
         >
-          <span style={{
-            width: 6, height: 6,
-            borderRadius: '50%',
-            background: 'var(--accent)',
-            display: 'inline-block',
-            animation: 'pulse-dot 1.6s ease-in-out infinite',
-          }} />
-          <span style={{
-            fontFamily: 'IBM Plex Mono, monospace',
-            fontSize: '0.68rem',
-            color: 'var(--accent)',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-          }}>
-            in the lab
-          </span>
+          <div>
+            <div
+              style={{
+                fontFamily: "IBM Plex Mono, monospace",
+                fontSize: "0.68rem",
+                color: "var(--accent)",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                marginBottom: "0.6rem",
+              }}
+            >
+              Lab // 04
+            </div>
+            <div
+              style={{
+                fontFamily: "Syne, sans-serif",
+                fontWeight: 700,
+                fontSize: "clamp(1.5rem, 4vw, 2.2rem)",
+                color: "#fff",
+                letterSpacing: "-0.02em",
+                lineHeight: 1.1,
+              }}
+            >
+              Project X
+            </div>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background: "rgba(var(--accent-rgb), 0.08)",
+              border: "1px solid rgba(var(--accent-rgb), 0.2)",
+              padding: "0.4rem 0.8rem",
+              borderRadius: "4px",
+            }}
+          >
+            <div
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "var(--accent)",
+                animation: "pulse-dot 1.6s ease-in-out infinite",
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "IBM Plex Mono, monospace",
+                fontSize: "0.65rem",
+                color: "var(--accent)",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+              }}
+            >
+              In Progress
+            </span>
+          </div>
         </div>
 
-        <h2 style={{
-          fontFamily: 'Syne, sans-serif',
-          fontWeight: 800,
-          fontSize: 'clamp(3rem, 8vw, 6.5rem)',
-          letterSpacing: '-0.045em',
-          lineHeight: 0.95,
-          marginBottom: '1.5rem',
-        }}>
-          Actually
-          <br />
-          <span style={{
-            fontStyle: 'italic',
-            background: 'linear-gradient(100deg, var(--accent) 0%, #7b2fff 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}>
-            cooking
-          </span>
-          <br />
-          something
-        </h2>
+        {/* Content */}
+        <div style={{ position: "relative", marginBottom: "2.5rem" }}>
+          <p
+            style={{
+              fontFamily: "DM Sans, sans-serif",
+              fontSize: "1rem",
+              color: "#9090b0",
+              lineHeight: 1.75,
+              marginBottom: "1.8rem",
+            }}
+          >
+            I'm currently building something that doesn't quite fit on a standard resume. It's experimental, heavily optimized, and highly classified until it's ready to see the light of day.
+          </p>
 
-        <p style={{
-          fontFamily: 'DM Sans, sans-serif',
-          fontSize: '0.95rem',
-          color: '#52526e',
-          maxWidth: 360,
-          margin: '0 auto 2.5rem',
-          lineHeight: 1.7,
-        }}>
-          Not ready to talk about it yet. But it's real, it's moving, and when it drops you'll know.
-        </p>
+          <div
+            style={{
+              fontFamily: "IBM Plex Mono, monospace",
+              fontSize: "0.82rem",
+              color: "#4a4a6a",
+              background: "rgba(0,0,0,0.4)",
+              padding: "1.2rem",
+              borderRadius: "8px",
+              border: "1px dashed rgba(255,255,255,0.06)",
+              wordBreak: "break-all",
+              lineHeight: 1.6,
+            }}
+          >
+            <span style={{ color: "var(--accent)", opacity: 0.8 }}>$ tail -f /dev/lab/status</span>
+            <br />
+            <br />
+            <span style={{ color: "#686888" }}>[WARN]</span> Data encrypted.
+            <br />
+            <span style={{ color: "#686888" }}>[INFO]</span> Decoding stream...
+            <br />
+            <span style={{ color: "#e2e2f0", opacity: 0.9 }}>&gt; {scramble}</span>
+          </div>
+        </div>
 
-        <p style={{
-          fontFamily: 'IBM Plex Mono, monospace',
-          fontSize: '0.72rem',
-          color: '#3a3a52',
-          letterSpacing: '0.1em',
-        }}>
-          ETA unknown. trust the process.
-        </p>
+        {/* Footer info */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontFamily: "IBM Plex Mono, monospace",
+            fontSize: "0.68rem",
+            color: "#52526e",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            position: "relative",
+          }}
+        >
+          <span>ETA: Unknown</span>
+          <span>Trust the process</span>
+        </div>
       </div>
 
-      <div style={{
-        position: "absolute",
-        bottom: "1.5rem",
-        left: 0,
-        right: 0,
-        textAlign: "center",
-        fontFamily: "DM Sans, sans-serif",
-        fontSize: "0.65rem",
-        color: "#52526e",
-      }}>
+      <div
+        style={{
+          position: "absolute",
+          bottom: "1.5rem",
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          fontFamily: "DM Sans, sans-serif",
+          fontSize: "0.65rem",
+          color: "#52526e",
+        }}
+      >
         <p style={{ marginBottom: "0.2rem" }}>
           &copy; {new Date().getFullYear()} Paweł Sobczak
         </p>
@@ -110,5 +215,5 @@ export default function LabContent({ progress }) {
         </p>
       </div>
     </div>
-  )
+  );
 }
