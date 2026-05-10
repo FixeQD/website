@@ -58,9 +58,20 @@ export default function Scene() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const isMobile = window.innerWidth < 768;
-    const activeTotal = isMobile ? Math.floor(TOTAL * 0.4) : TOTAL;
-    const activeMaxLinks = isMobile ? Math.floor(MAX_LINKS * 0.4) : MAX_LINKS;
+    const width = window.innerWidth;
+    const isMobile = width < 640;
+    const isTablet = width < 1024;
+    
+    let activeTotal = TOTAL;
+    let activeMaxLinks = MAX_LINKS;
+
+    if (isMobile) {
+      activeTotal = Math.floor(TOTAL * 0.35);
+      activeMaxLinks = Math.floor(MAX_LINKS * 0.3);
+    } else if (isTablet) {
+      activeTotal = Math.floor(TOTAL * 0.65);
+      activeMaxLinks = Math.floor(MAX_LINKS * 0.6);
+    }
 
     let renderer;
     try {

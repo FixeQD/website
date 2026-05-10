@@ -103,15 +103,15 @@ export default function Hero() {
         pointerEvents: "var(--events-0, none)",
       }}
     >
-      <div style={{ marginLeft: "max(1rem, 5vw)", maxWidth: 560 }}>
+      <div style={{ marginLeft: "max(2rem, 8vw)", maxWidth: 720 }}>
         {/* typewriter */}
         <div
           style={{
             fontFamily: "IBM Plex Mono, monospace",
-            fontSize: "0.82rem",
+            fontSize: "0.9rem",
             color: "var(--accent)",
-            marginBottom: "1.4rem",
-            minHeight: "1.2rem",
+            marginBottom: "1.6rem",
+            minHeight: "1.4rem",
             display: "flex",
             alignItems: "center",
           }}
@@ -125,10 +125,10 @@ export default function Hero() {
           style={{
             fontFamily: "Syne, sans-serif",
             fontWeight: 800,
-            fontSize: "clamp(2.5rem, 11vw, 5rem)",
-            lineHeight: 1.04,
+            fontSize: "clamp(2.8rem, 12vw, 6.5rem)",
+            lineHeight: 1.02,
             letterSpacing: "-0.035em",
-            marginBottom: "1.4rem",
+            marginBottom: "1.6rem",
           }}
         >
           I build things
