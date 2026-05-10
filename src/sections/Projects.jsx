@@ -120,7 +120,7 @@ function ProjectCard({ project, onHover }) {
   );
 }
 
-export default function ProjectsContent({ progress }) {
+export default function Projects() {
   const onInteraction = () => bridge.emit("hover");
 
   return (

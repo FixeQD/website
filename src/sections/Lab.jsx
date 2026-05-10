@@ -9,7 +9,7 @@ const glass = {
   borderRadius: "16px",
 };
 
-export default function LabContent({ progress }) {
+export default function Lab() {
   const onInteraction = () => bridge.emit("hover");
   const scrambleRef = useRef(null);
 

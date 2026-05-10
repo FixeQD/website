@@ -11,7 +11,7 @@ const glass = {
   borderRadius: "14px",
 };
 
-export default function AboutContent({ progress }) {
+export default function AboutContent() {
   const onInteraction = () => bridge.emit("hover");
   const { stats, loading } = useGithubStats("FixeQD");
 
@@ -320,9 +320,8 @@ export default function AboutContent({ progress }) {
                 style={{
                   fontFamily: "DM Sans, sans-serif",
                   fontSize: "0.8rem",
-                  color: "#6868888",
+                  color: "#707090",
                   lineHeight: 1.55,
-                  color: "#7070906",
                 }}
               >
                 {parseMarkdown(a.desc)}

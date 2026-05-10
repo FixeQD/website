@@ -85,7 +85,7 @@ const SocialIcon = ({ social }) => {
   );
 };
 
-export default function HeroContent({ progress }) {
+export default function Hero() {
   const word = useTypewriter(typewriterWords);
 
   const onInteraction = () => bridge.emit("hover");

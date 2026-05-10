@@ -5,15 +5,26 @@ import Hero from './sections/Hero'
 import About from './sections/About'
 import Projects from './sections/Projects'
 import Lab from './sections/Lab'
-import { useScrollProgressState } from './hooks/index'
+import { useScrollProgress } from './hooks/index'
 
 const SCROLL_HEIGHT = '480vh'
 const CHAPTER_COUNT = 4
 
 export default function App() {
-  const scroll = useScrollProgressState()
-  const raw = scroll * (CHAPTER_COUNT - 1)
-  const chapter = Math.min(Math.floor(raw + 0.5), CHAPTER_COUNT - 1)
+  const scrollRef = useScrollProgress()
+  const [chapter, setChapter] = useState(0)
+
+  useEffect(() => {
+    let raf;
+    const check = () => {
+      const raw = scrollRef.current * (CHAPTER_COUNT - 1);
+      const next = Math.min(Math.floor(raw + 0.5), CHAPTER_COUNT - 1);
+      if (next !== chapter) setChapter(next);
+      raf = requestAnimationFrame(check);
+    };
+    check();
+    return () => cancelAnimationFrame(raf);
+  }, [chapter, scrollRef]);
 
   const jumpTo = useCallback((idx) => {
     const max = document.documentElement.scrollHeight - window.innerHeight
@@ -47,13 +58,13 @@ export default function App() {
   return (
     <>
       <Scene />
-      <Nav chapter={chapter} scroll={scroll} onJump={jumpTo} />
+      <Nav chapter={chapter} onJump={jumpTo} />
 
       <div style={{ position: 'fixed', inset: 0, zIndex: 20, pointerEvents: 'none' }}>
-        <Hero progress={raw - 0} />
-        <About progress={raw - 1} />
-        <Projects progress={raw - 2} />
-        <Lab progress={raw - 3} />
+        <Hero />
+        <About />
+        <Projects />
+        <Lab />
       </div>
 
       <div style={{

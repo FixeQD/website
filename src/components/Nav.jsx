@@ -1,49 +1,50 @@
 import { useEffect, useState, useRef } from 'react'
 import { me } from '../data'
+import { useScrollProgress } from '../hooks'
 
-const SECTIONS = ['hero', 'about', 'projects', 'lab']
+const SECTIONS = ['Hero', 'About', 'Projects', 'Lab']
 const CHAPTER_COUNT = SECTIONS.length
 
-export default function Nav({ chapter, scroll, onJump }) {
+export default function Nav({ chapter, onJump }) {
   const [scrolled, setScrolled] = useState(false)
-  const trackRef = useRef(null)
   const bannerRef = useRef(null)
   const [bannerHeight, setBannerHeight] = useState(0)
+  const scrollRef = useScrollProgress()
+  const barRef = useRef(null)
+  const trackRef = useRef(null)
 
   useEffect(() => {
-    const fn = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', fn, { passive: true })
-    return () => window.removeEventListener('scroll', fn)
+    let raf
+    const update = () => {
+      if (barRef.current) {
+        barRef.current.style.height = `${scrollRef.current * 100}%`
+      }
+      raf = requestAnimationFrame(update)
+    }
+    update()
+    return () => cancelAnimationFrame(raf)
+  }, [scrollRef])
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
-    const script = document.createElement("script")
-    script.src = "https://keepandroidopen.org/banner.js?size=minimal&id=lockdown-countdown&animation=off"
-    script.defer = true
-    document.head.appendChild(script)
-
-    const observer = new ResizeObserver((entries) => {
+    if (!bannerRef.current) return
+    const obs = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setBannerHeight(entry.target.offsetHeight)
       }
     })
-
-    if (bannerRef.current) {
-      observer.observe(bannerRef.current)
-    }
-
-    return () => {
-      if (document.head.contains(script)) {
-        document.head.removeChild(script)
-      }
-      observer.disconnect()
-    }
+    obs.observe(bannerRef.current)
+    return () => obs.disconnect()
   }, [])
 
   const onTrackClick = (e) => {
-    const track = trackRef.current
-    if (!track) return
-    const rect = track.getBoundingClientRect()
+    if (!trackRef.current) return
+    const rect = trackRef.current.getBoundingClientRect()
     const ratio = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height))
     const idx = Math.round(ratio * (CHAPTER_COUNT - 1))
     onJump(idx)
@@ -134,6 +135,7 @@ export default function Nav({ chapter, scroll, onJump }) {
       <div
         ref={trackRef}
         onClick={onTrackClick}
+        aria-label="Scroll progress"
         style={{
           position: 'fixed',
           right: 12,
@@ -148,27 +150,13 @@ export default function Nav({ chapter, scroll, onJump }) {
         }}
       >
         <div
-          style={{
-            position: 'absolute',
-            top: `${scroll * 100}%`,
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 7,
-            height: 7,
-            borderRadius: '50%',
-            background: 'var(--accent)',
-            boxShadow: '0 0 8px rgba(var(--accent-rgb), 0.5)',
-            transition: 'box-shadow 0.3s',
-          }}
-        />
-
-        <div
+          ref={barRef}
           style={{
             position: 'absolute',
             top: 0,
             left: 0,
             width: '100%',
-            height: `${scroll * 100}%`,
+            height: '0%',
             background: 'rgba(var(--accent-rgb), 0.35)',
             borderRadius: 2,
           }}
@@ -228,4 +216,3 @@ export default function Nav({ chapter, scroll, onJump }) {
     </>
   )
 }
-

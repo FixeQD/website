@@ -294,15 +294,14 @@ export default function Scene() {
     const camTarget = new THREE.Vector3();
     const lookSmooth = HUBS[0].clone();
     const lookTarget = new THREE.Vector3();
-    const tangentSmooth = new THREE.Vector3(0, 0, -1);
     const upVec = new THREE.Vector3(0, 1, 0);
     let smoothRoll = 0;
+    const cross = new THREE.Vector3();
 
     let raf, time = 0;
     let lastScroll = 0;
     let scrollVel = 0;
     let boost = 0;
-    let prevTangent = new THREE.Vector3(0, 0, -1);
     let smoothRaw = 0;
 
     const unbind = bridge.subscribe((type) => {
@@ -377,7 +376,7 @@ export default function Scene() {
       camera.lookAt(lookSmooth);
 
       const aheadTangent = camCurve.getTangent(lookAheadT).normalize();
-      const cross = new THREE.Vector3().crossVectors(camTangent, aheadTangent);
+      cross.crossVectors(camTangent, aheadTangent);
 
       const velocityMult = Math.min(scrollVel + 0.2, 1.5);
       let targetRoll = -cross.y * 4.0 * velocityMult;
