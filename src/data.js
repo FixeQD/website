@@ -64,7 +64,7 @@ export const projects = [
     desc: 'A Spicetify extension that syncs a cat head-bobbing animation to the actual beat of the song. TypeScript + Bun.',
     tags: ['TypeScript', 'Bun', 'Spicetify'],
     color: '#f59e0b',
-    url: 'https://github.com/FixeQD',
+    url: 'https://github.com/FixeQD/spicetify-cat-jam-synced-reborn',
     wip: false,
   },
 ]
