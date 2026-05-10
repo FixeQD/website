@@ -135,6 +135,14 @@ export default function Nav({ chapter, onJump }) {
       <div
         ref={trackRef}
         onClick={onTrackClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            if (e.key === ' ') e.preventDefault()
+            onTrackClick(e)
+          }
+        }}
+        role="button"
+        tabIndex={0}
         aria-label="Scroll progress"
         style={{
           position: 'fixed',
@@ -147,7 +155,10 @@ export default function Nav({ chapter, onJump }) {
           borderRadius: 2,
           zIndex: 100,
           cursor: 'pointer',
+          outline: 'none',
         }}
+        onFocus={(e) => e.currentTarget.style.boxShadow = '0 0 0 2px rgba(var(--accent-rgb), 0.5)'}
+        onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
       >
         <div
           ref={barRef}
