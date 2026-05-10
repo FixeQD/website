@@ -71,3 +71,46 @@ export function useReducedMotion() {
   }, []);
   return v;
 }
+
+const API_BASE = "https://github-readme-stats.fixeq.me/api/json";
+
+export function useGithubStats(username) {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchStats = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}?username=${username}`);
+      if (!res.ok) throw new Error("API Error");
+      const data = await res.json();
+
+      const total = data.contributesLanguage?.reduce((sum, l) => sum + l.contributions, 0) ?? 0;
+
+      const topLanguages = (data.contributesLanguage ?? []).slice(0, 5).map((l) => ({
+        name: l.language,
+        color: l.color,
+        percent: total > 0 ? Math.round((l.contributions / total) * 100) : 0,
+      }));
+
+      setStats({
+        contributions: data.totalContributions ?? 0,
+        commits: data.totalCommitContributions ?? 0,
+        stars: data.totalStargazerCount ?? 0,
+        topLanguages,
+      });
+    } catch {
+      setStats(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (username) {
+      fetchStats();
+    }
+  }, [username]);
+
+  return { stats, loading, fetch: fetchStats };
+}
