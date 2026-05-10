@@ -10,6 +10,10 @@ function useTypewriter(words) {
   const deleting = useRef(false);
 
   useEffect(() => {
+    if (!Array.isArray(words) || words.length === 0) {
+      setText("");
+      return;
+    }
     let t;
     const tick = () => {
       const word = words[wordIdx.current];
@@ -57,6 +61,7 @@ const SocialIcon = ({ social }) => {
       target="_blank"
       rel="noopener noreferrer"
       title={social.name}
+      aria-label={`Visit ${social.name}`}
       style={{
         width: 38,
         height: 38,
