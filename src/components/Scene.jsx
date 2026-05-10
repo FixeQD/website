@@ -258,6 +258,7 @@ export default function Scene() {
     let scrollVel = 0;
     let boost = 0;
     let prevTangent = new THREE.Vector3(0, 0, -1);
+    let smoothRaw = 0;
 
     const unbind = bridge.subscribe((type) => {
       if (type === "hover") boost = 1.0;
@@ -304,6 +305,16 @@ export default function Scene() {
 
       const spd = noMotion ? 1 : 0.02;
       camSmooth.lerp(camTarget, spd);
+
+      smoothRaw += (raw - smoothRaw) * spd;
+      for (let i = 0; i < HUBS.length; i++) {
+        const absP = Math.abs(smoothRaw - i);
+        const op = Math.max(0, Math.min(1, 1.2 - absP * 3.5));
+        const ty = (smoothRaw - i) * 40;
+        root.style.setProperty(`--opacity-${i}`, op);
+        root.style.setProperty(`--translate-${i}`, `${ty}px`);
+        root.style.setProperty(`--events-${i}`, op > 0.2 ? "auto" : "none");
+      }
 
       camera.position.copy(camSmooth);
       camera.position.x += sMx * 28;

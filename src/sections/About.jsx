@@ -10,10 +10,6 @@ const glass = {
 };
 
 export default function AboutContent({ progress }) {
-  const absProgress = Math.abs(progress);
-  const opacity = Math.max(0, Math.min(1, 1.8 - absProgress * 4));
-  const translateY = progress * 40;
-
   const onInteraction = () => bridge.emit("hover");
 
   return (
@@ -25,9 +21,9 @@ export default function AboutContent({ progress }) {
         alignItems: "center",
         justifyContent: "center",
         padding: "5rem 2rem 2rem",
-        opacity: opacity,
-        transform: `translateY(${translateY}px)`,
-        pointerEvents: opacity > 0.2 ? "auto" : "none",
+        opacity: "var(--opacity-1, 0)",
+        transform: "translateY(var(--translate-1, 0px))",
+        pointerEvents: "var(--events-1, none)",
         overflowY: "auto",
       }}
     >

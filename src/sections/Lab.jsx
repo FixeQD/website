@@ -1,10 +1,6 @@
 import { bridge } from "../utils/bridge";
 
 export default function LabContent({ progress }) {
-  const absProgress = Math.abs(progress);
-  const opacity = Math.max(0, Math.min(1, 1.8 - absProgress * 4));
-  const translateY = progress * 40;
-
   const onInteraction = () => bridge.emit("hover");
 
   return (
@@ -17,9 +13,9 @@ export default function LabContent({ progress }) {
         justifyContent: "center",
         textAlign: "center",
         padding: "5rem 2rem 2rem",
-        opacity: opacity,
-        transform: `translateY(${translateY}px)`,
-        pointerEvents: opacity > 0.2 ? "auto" : "none",
+        opacity: "var(--opacity-3, 0)",
+        transform: "translateY(var(--translate-3, 0px))",
+        pointerEvents: "var(--events-3, none)",
       }}
     >
       <div>

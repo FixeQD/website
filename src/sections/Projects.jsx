@@ -121,10 +121,6 @@ function ProjectCard({ project, onHover }) {
 }
 
 export default function ProjectsContent({ progress }) {
-  const absProgress = Math.abs(progress);
-  const opacity = Math.max(0, Math.min(1, 1.8 - absProgress * 4));
-  const translateY = progress * 40;
-
   const onInteraction = () => bridge.emit("hover");
 
   return (
@@ -135,10 +131,10 @@ export default function ProjectsContent({ progress }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "5rem 2rem 2rem",
-        opacity: opacity,
-        transform: `translateY(${translateY}px)`,
-        pointerEvents: opacity > 0.2 ? "auto" : "none",
+        padding: "4rem 2rem 2rem",
+        opacity: "var(--opacity-2, 0)",
+        transform: "translateY(var(--translate-2, 0px))",
+        pointerEvents: "var(--events-2, none)",
         overflowY: "auto",
       }}
     >

@@ -87,11 +87,6 @@ const SocialIcon = ({ social }) => {
 export default function HeroContent({ progress }) {
   const word = useTypewriter(typewriterWords);
 
-  // Visibility
-  const absProgress = Math.abs(progress);
-  const opacity = Math.max(0, Math.min(1, 1.8 - absProgress * 4));
-  const translateY = progress * 40;
-
   const onInteraction = () => bridge.emit("hover");
 
   return (
@@ -102,9 +97,9 @@ export default function HeroContent({ progress }) {
         display: "flex",
         alignItems: "center",
         padding: "0 2rem",
-        opacity: opacity,
-        transform: `translateY(${translateY}px)`,
-        pointerEvents: opacity > 0.2 ? "auto" : "none",
+        opacity: "var(--opacity-0, 0)",
+        transform: "translateY(var(--translate-0, 0px))",
+        pointerEvents: "var(--events-0, none)",
       }}
     >
       <div style={{ marginLeft: "max(2rem, 7vw)", maxWidth: 560 }}>
@@ -216,7 +211,7 @@ export default function HeroContent({ progress }) {
           flexDirection: "column",
           alignItems: "center",
           gap: "0.4rem",
-          opacity: opacity * 0.6,
+          opacity: "calc(var(--opacity-0, 0) * 0.6)",
         }}
       >
         <span
