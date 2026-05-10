@@ -1,29 +1,60 @@
 import { useEffect, useRef, useState } from "react";
 
+let targetProgress = 0;
+let currentProgress = 0;
+let isInitialized = false;
+
+const refs = new Set();
+const setters = new Set();
+
+function updateTarget() {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  targetProgress = max > 0 ? window.scrollY / max : 0;
+}
+
+function tick() {
+  const diff = targetProgress - currentProgress;
+  const maxSpd = 0.0035;
+
+  if (Math.abs(diff) > maxSpd) {
+    currentProgress += Math.sign(diff) * maxSpd;
+  } else {
+    currentProgress += diff * 0.15;
+  }
+
+  if (Math.abs(diff) > 0.00005) {
+    refs.forEach((ref) => { ref.current = currentProgress; });
+    setters.forEach((set) => set(currentProgress));
+  }
+
+  requestAnimationFrame(tick);
+}
+
+function init() {
+  if (typeof window === "undefined" || isInitialized) return;
+  isInitialized = true;
+  window.addEventListener("scroll", updateTarget, { passive: true });
+  updateTarget();
+  currentProgress = targetProgress;
+  requestAnimationFrame(tick);
+}
+
 export function useScrollProgress() {
-  const ref = useRef(0);
+  init();
+  const ref = useRef(currentProgress);
   useEffect(() => {
-    const fn = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      ref.current = max > 0 ? window.scrollY / max : 0;
-    };
-    window.addEventListener("scroll", fn, { passive: true });
-    fn();
-    return () => window.removeEventListener("scroll", fn);
+    refs.add(ref);
+    return () => refs.delete(ref);
   }, []);
   return ref;
 }
 
 export function useScrollProgressState() {
-  const [p, setP] = useState(0);
+  init();
+  const [p, setP] = useState(currentProgress);
   useEffect(() => {
-    const fn = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      setP(max > 0 ? window.scrollY / max : 0);
-    };
-    window.addEventListener("scroll", fn, { passive: true });
-    fn();
-    return () => window.removeEventListener("scroll", fn);
+    setters.add(setP);
+    return () => setters.delete(setP);
   }, []);
   return p;
 }
