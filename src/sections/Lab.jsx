@@ -91,6 +91,24 @@ export default function LabContent({ progress }) {
           ETA unknown. trust the process.
         </p>
       </div>
+
+      <div style={{
+        position: "absolute",
+        bottom: "1.5rem",
+        left: 0,
+        right: 0,
+        textAlign: "center",
+        fontFamily: "DM Sans, sans-serif",
+        fontSize: "0.65rem",
+        color: "#52526e",
+      }}>
+        <p style={{ marginBottom: "0.2rem" }}>
+          &copy; {new Date().getFullYear()} Paweł Sobczak
+        </p>
+        <p>
+          Built with React, Tailwind CSS &amp; Three.js and of course ❤️
+        </p>
+      </div>
     </div>
   )
 }
