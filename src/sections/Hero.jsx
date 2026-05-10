@@ -103,7 +103,7 @@ export default function HeroContent({ progress }) {
         pointerEvents: "var(--events-0, none)",
       }}
     >
-      <div style={{ marginLeft: "max(2rem, 7vw)", maxWidth: 560 }}>
+      <div style={{ marginLeft: "max(1rem, 5vw)", maxWidth: 560 }}>
         {/* typewriter */}
         <div
           style={{
@@ -125,7 +125,7 @@ export default function HeroContent({ progress }) {
           style={{
             fontFamily: "Syne, sans-serif",
             fontWeight: 800,
-            fontSize: "clamp(2.8rem, 6.5vw, 5rem)",
+            fontSize: "clamp(2.5rem, 11vw, 5rem)",
             lineHeight: 1.04,
             letterSpacing: "-0.035em",
             marginBottom: "1.4rem",

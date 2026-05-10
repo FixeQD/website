@@ -58,8 +58,12 @@ export default function Scene() {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const isMobile = window.innerWidth < 768;
+    const activeTotal = isMobile ? Math.floor(TOTAL * 0.4) : TOTAL;
+    const activeMaxLinks = isMobile ? Math.floor(MAX_LINKS * 0.4) : MAX_LINKS;
+
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setClearColor(0x04040a, 1);
 
     const scene = new THREE.Scene();
@@ -346,7 +350,7 @@ export default function Scene() {
 
       if (!noMotion) {
         const speedMult = 1 + scrollVel * 4 + boost * 2;
-        for (let i = 0; i < TOTAL; i++) {
+        for (let i = 0; i < activeTotal; i++) {
           pos[i * 3] += vel[i * 3] * speedMult;
           pos[i * 3 + 1] += vel[i * 3 + 1] * speedMult;
           pos[i * 3 + 2] += vel[i * 3 + 2] * speedMult;
@@ -357,7 +361,7 @@ export default function Scene() {
         }
 
         let lc = 0;
-        for (let i = 0; i < TOTAL; i++) {
+        for (let i = 0; i < activeTotal; i++) {
           let pr = 0.015 + ar * 0.15;
           let pg = 0.04 + ag * 0.15;
           let pb = 0.08 + ab * 0.15;
@@ -379,9 +383,9 @@ export default function Scene() {
           col[i * 3 + 2] = pb;
 
           let nodeLinks = 0;
-          if (lc >= MAX_LINKS) continue;
-          for (let j = i + 1; j < TOTAL; j++) {
-            if (lc >= MAX_LINKS) break;
+          if (lc >= activeMaxLinks) continue;
+          for (let j = i + 1; j < activeTotal; j++) {
+            if (lc >= activeMaxLinks) break;
             if (nodeLinks >= 4) break;
             const ex = pos[i * 3] - pos[j * 3];
             const ey = pos[i * 3 + 1] - pos[j * 3 + 1];
