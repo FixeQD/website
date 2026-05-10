@@ -39,6 +39,7 @@ async function generate() {
   const pngBuffer = pngData.asPng();
 
   const outPath = path.join(process.cwd(), 'public', 'og-image.png');
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, pngBuffer);
   console.log(`Saved OG Image to ${outPath}`);
 }
