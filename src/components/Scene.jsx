@@ -305,11 +305,10 @@ export default function Scene() {
       camera.position.x += sMx * 28;
       camera.position.y += sMy * 18;
 
-      if (t >= 0.99) {
-        lookTarget.copy(camTarget).add(camTangent.clone().multiplyScalar(300));
-      } else {
-        lookTarget.copy(aheadCamPoint).lerp(aheadHubPoint, 0.5);
-      }
+      const hubFocus = t > 0.8 ? 0.5 + (t - 0.8) * 2.5 : 0.5;
+      const targetFocus = Math.min(hubFocus, 1.0);
+
+      lookTarget.copy(aheadCamPoint).lerp(aheadHubPoint, targetFocus);
 
       lookSmooth.lerp(lookTarget, spd * 1.2);
       camera.lookAt(lookSmooth);
