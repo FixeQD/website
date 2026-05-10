@@ -64,8 +64,6 @@ export default function Scene() {
 
     let renderer;
     try {
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl') || canvas.getContext('webgl2');
-      if (!gl) throw new Error("WebGL not supported");
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
       renderer.setClearColor(0x04040a, 1);
@@ -99,12 +97,17 @@ export default function Scene() {
           const ty = (smoothRaw - i) * 40;
           root.style.setProperty(`--opacity-${i}`, op);
           root.style.setProperty(`--translate-${i}`, `${ty}px`);
-          root.style.setProperty(`--events-${i}`, op > 0.2 ? "auto" : "none");
+          root.style.setProperty(`--events-${i}`, absP < 0.35 ? 'all' : 'none');
         }
       };
       
       fallbackTick();
-      return () => cancelAnimationFrame(raf);
+      return () => {
+        cancelAnimationFrame(raf);
+        const root = document.documentElement;
+        root.style.setProperty('--accent', '#00d9ff');
+        root.style.setProperty('--accent-rgb', '0,217,255');
+      };
     }
 
     const scene = new THREE.Scene();
