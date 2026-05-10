@@ -21,6 +21,29 @@ export default function App() {
     window.scrollTo({ top: target, behavior: 'smooth' })
   }, [])
 
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const currentProgress = max > 0 ? window.scrollY / max : 0;
+        const currentRaw = currentProgress * (CHAPTER_COUNT - 1);
+        const currentChapter = Math.floor(currentRaw + 0.5);
+        
+        const direction = e.shiftKey ? -1 : 1;
+        const nextChapter = Math.max(0, Math.min(currentChapter + direction, CHAPTER_COUNT - 1));
+        
+        jumpTo(nextChapter);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown, { passive: false });
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [jumpTo]);
+
   return (
     <>
       <Scene />
