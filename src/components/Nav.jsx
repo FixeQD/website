@@ -6,11 +6,37 @@ const CHAPTER_COUNT = SECTIONS.length
 export default function Nav({ chapter, scroll, onJump }) {
   const [scrolled, setScrolled] = useState(false)
   const trackRef = useRef(null)
+  const bannerRef = useRef(null)
+  const [bannerHeight, setBannerHeight] = useState(0)
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', fn, { passive: true })
     return () => window.removeEventListener('scroll', fn)
+  }, [])
+
+  useEffect(() => {
+    const script = document.createElement("script")
+    script.src = "https://keepandroidopen.org/banner.js?size=minimal&id=lockdown-countdown&animation=off"
+    script.defer = true
+    document.head.appendChild(script)
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setBannerHeight(entry.target.offsetHeight)
+      }
+    })
+
+    if (bannerRef.current) {
+      observer.observe(bannerRef.current)
+    }
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script)
+      }
+      observer.disconnect()
+    }
   }, [])
 
   const onTrackClick = (e) => {
@@ -24,57 +50,85 @@ export default function Nav({ chapter, scroll, onJump }) {
 
   return (
     <>
-      <nav
+      <div
+        id="lockdown-countdown"
+        ref={bannerRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 110,
+          width: "100%",
+        }}
+      />
+
+      <div
         style={{
           position: 'fixed',
-          top: 0, left: 0, right: 0,
+          top: 0,
+          left: 0,
+          right: 0,
           zIndex: 100,
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '1.2rem 2rem',
-          transition: 'background 0.5s, backdrop-filter 0.5s',
-          background: scrolled ? 'rgba(6,6,9,0.7)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(14px)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(255,255,255,0.05)' : '1px solid transparent',
+          transition: 'transform 0.5s ease-in-out',
+          transform: `translateY(${scrolled ? 12 : bannerHeight}px)`,
         }}
       >
-        <button
-          onClick={() => onJump(0)}
+        <nav
           style={{
-            fontFamily: 'Syne, sans-serif',
-            fontWeight: 700,
-            fontSize: '1.05rem',
-            color: 'var(--accent)',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            letterSpacing: '-0.01em',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            maxWidth: scrolled ? '1100px' : '100vw',
+            padding: scrolled ? '0.75rem 1.5rem' : '1.2rem 2rem',
+            transition: 'all 0.5s ease-in-out',
+            background: scrolled ? 'rgba(6,6,9,0.7)' : 'transparent',
+            backdropFilter: scrolled ? 'blur(14px)' : 'none',
+            border: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
+            borderRadius: scrolled ? '16px' : '0',
           }}
         >
-          fixeq
-        </button>
+          <button
+            onClick={() => onJump(0)}
+            style={{
+              fontFamily: 'Syne, sans-serif',
+              fontWeight: 700,
+              fontSize: '1.05rem',
+              color: 'var(--accent)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              letterSpacing: '-0.01em',
+            }}
+          >
+            fixeq
+          </button>
 
-        <a
-          href="https://github.com/FixeQD"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            fontFamily: 'IBM Plex Mono, monospace',
-            fontSize: '0.78rem',
-            color: 'var(--accent)',
-            textDecoration: 'none',
-            border: '1px solid rgba(var(--accent-rgb), 0.28)',
-            padding: '0.32rem 0.85rem',
-            borderRadius: '4px',
-            transition: 'background 0.2s',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = 'rgba(var(--accent-rgb), 0.08)'}
-          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-        >
-          GitHub →
-        </a>
-      </nav>
+          <a
+            href="https://github.com/FixeQD"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontFamily: 'IBM Plex Mono, monospace',
+              fontSize: '0.78rem',
+              color: 'var(--accent)',
+              textDecoration: 'none',
+              border: '1px solid rgba(var(--accent-rgb), 0.28)',
+              padding: '0.32rem 0.85rem',
+              borderRadius: '4px',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(var(--accent-rgb), 0.08)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            GitHub →
+          </a>
+        </nav>
+      </div>
 
       <div
         ref={trackRef}
