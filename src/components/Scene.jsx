@@ -291,7 +291,11 @@ export default function Scene() {
 
       const camTangent = camCurve.getTangent(t).normalize();
 
-      const lookAheadT = Math.min(t + 0.06, 1.0);
+      const distanceToHub = Math.abs(raw - Math.round(raw));
+
+      const lookAheadOffset = 0.01 + (Math.sqrt(distanceToHub * 2)) * 0.07;
+      const lookAheadT = Math.min(t + lookAheadOffset, 1.0);
+
       const aheadCamPoint = camCurve.getPoint(lookAheadT);
       const aheadHubPoint = hubCurve.getPoint(lookAheadT);
 
@@ -305,8 +309,11 @@ export default function Scene() {
       camera.position.x += sMx * 28;
       camera.position.y += sMy * 18;
 
-      const hubFocus = t > 0.8 ? 0.5 + (t - 0.8) * 2.5 : 0.5;
-      const targetFocus = Math.min(hubFocus, 1.0);
+      let hubFocus = 1.0 - (distanceToHub * 1.2);
+      if (t > 0.8) {
+        hubFocus = Math.max(hubFocus, 0.5 + (t - 0.8) * 2.5);
+      }
+      const targetFocus = Math.max(0, Math.min(hubFocus, 1.0));
 
       lookTarget.copy(aheadCamPoint).lerp(aheadHubPoint, targetFocus);
 
