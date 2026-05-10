@@ -1,5 +1,6 @@
 import { me, achievements, skills } from "../data";
 import { bridge } from "../utils/bridge";
+import { useGithubStats } from "../hooks";
 
 const glass = {
   background: "rgba(6,6,9,0.62)",
@@ -11,6 +12,7 @@ const glass = {
 
 export default function AboutContent({ progress }) {
   const onInteraction = () => bridge.emit("hover");
+  const { stats, loading } = useGithubStats("FixeQD");
 
   return (
     <div
@@ -27,7 +29,7 @@ export default function AboutContent({ progress }) {
         overflowY: "auto",
       }}
     >
-      <div style={{ width: "100%", maxWidth: 860 }}>
+      <div style={{ width: "100%", maxWidth: 1100 }}>
         <span
           style={{
             fontFamily: "IBM Plex Mono, monospace",
@@ -55,8 +57,16 @@ export default function AboutContent({ progress }) {
           The longer version
         </h2>
 
-        {/* main panel */}
-        <div style={{ ...glass, padding: "2rem", marginBottom: "1.25rem" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))",
+          gap: "1.25rem",
+          alignItems: "start",
+        }}>
+          {/* Left Column */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            {/* main panel */}
+            <div style={{ ...glass, padding: "2rem" }}>
           <p
             style={{
               fontFamily: "DM Sans, sans-serif",
@@ -109,7 +119,7 @@ export default function AboutContent({ progress }) {
         </div>
 
         {/* skills */}
-        <div style={{ ...glass, padding: "1.5rem", marginBottom: "1.25rem" }}>
+        <div style={{ ...glass, padding: "1.5rem" }}>
           <span
             style={{
               fontFamily: "IBM Plex Mono, monospace",
@@ -143,12 +153,145 @@ export default function AboutContent({ progress }) {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Right Column */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+        {/* github stats */}
+        {!loading && stats && (
+          <div style={{ ...glass, padding: "1.5rem" }}>
+            <span
+              style={{
+                fontFamily: "IBM Plex Mono, monospace",
+                fontSize: "0.68rem",
+                color: "#52526e",
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                display: "block",
+                marginBottom: "1.2rem",
+              }}
+            >
+              github activity
+            </span>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "0.75rem",
+                marginBottom: "1.5rem",
+              }}
+            >
+              {[
+                { label: 'Contributions', value: stats.contributions },
+                { label: 'Commits', value: stats.commits },
+                { label: 'Stars', value: stats.stars }
+              ].map(item => (
+                <div key={item.label} style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.04)",
+                  borderRadius: "8px",
+                  padding: "0.85rem 0.5rem",
+                  textAlign: "center",
+                }}>
+                  <div style={{
+                    fontFamily: "Syne, sans-serif",
+                    fontWeight: 700,
+                    fontSize: "1.35rem",
+                    color: "var(--accent)",
+                    letterSpacing: "-0.02em",
+                    marginBottom: "0.15rem",
+                  }}>
+                    {item.value ?? '-'}
+                  </div>
+                  <div style={{
+                    fontFamily: "DM Sans, sans-serif",
+                    fontSize: "0.7rem",
+                    color: "#52526e",
+                  }}>
+                    {item.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {stats.topLanguages && stats.topLanguages.length > 0 && (
+              <div>
+                <div style={{
+                  fontFamily: "DM Sans, sans-serif",
+                  fontSize: "0.75rem",
+                  color: "#52526e",
+                  marginBottom: "0.6rem",
+                }}>
+                  Top Languages
+                </div>
+                
+                <div style={{
+                  display: "flex",
+                  height: "6px",
+                  width: "100%",
+                  overflow: "hidden",
+                  borderRadius: "999px",
+                  background: "rgba(255,255,255,0.05)",
+                  marginBottom: "0.8rem",
+                }}>
+                  {stats.topLanguages.map((lang) => (
+                    <div
+                      key={lang.name}
+                      style={{
+                        width: `${lang.percent}%`,
+                        background: lang.color,
+                        transition: "width 0.7s ease",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <div style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "1rem",
+                  rowGap: "0.5rem",
+                }}>
+                  {stats.topLanguages.map(lang => (
+                    <div key={lang.name} style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.4rem",
+                    }}>
+                      <div style={{
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: lang.color,
+                      }} />
+                      <span style={{
+                        fontFamily: "DM Sans, sans-serif",
+                        fontSize: "0.75rem",
+                        color: "#9090b0",
+                      }}>
+                        {lang.name}
+                      </span>
+                      <span style={{
+                        fontFamily: "IBM Plex Mono, monospace",
+                        fontSize: "0.7rem",
+                        color: "#52526e",
+                      }}>
+                        {lang.percent}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* achievements */}
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
             gap: "0.75rem",
           }}
         >
@@ -188,5 +331,7 @@ export default function AboutContent({ progress }) {
         </div>
       </div>
     </div>
+  </div>
+</div>
   );
 }
