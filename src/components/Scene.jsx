@@ -26,14 +26,14 @@ const HUB_RGB = [
   [0.0, 1.0, 0.667],
 ];
 
-const TOTAL = 1000;
-const PER_HUB = 110;
+const TOTAL = 800;
+const PER_HUB = 40;
 const SCATTER = TOTAL - HUBS.length * PER_HUB;
-const HUB_R = 65;
+const HUB_R = 110;
 
-const LINK_DIST = 80;
+const LINK_DIST = 75;
 const LINK_SQ = LINK_DIST * LINK_DIST;
-const MAX_LINKS = 550;
+const MAX_LINKS = 800;
 
 function makeSprite() {
   const c = document.createElement("canvas");
@@ -367,14 +367,17 @@ export default function Scene() {
           col[i * 3 + 1] = pg;
           col[i * 3 + 2] = pb;
 
+          let nodeLinks = 0;
           if (lc >= MAX_LINKS) continue;
           for (let j = i + 1; j < TOTAL; j++) {
             if (lc >= MAX_LINKS) break;
+            if (nodeLinks >= 4) break;
             const ex = pos[i * 3] - pos[j * 3];
             const ey = pos[i * 3 + 1] - pos[j * 3 + 1];
             const ez = pos[i * 3 + 2] - pos[j * 3 + 2];
             const d2 = ex * ex + ey * ey + ez * ez;
             if (d2 < LINK_SQ) {
+              nodeLinks++;
               const s = (1 - d2 / LINK_SQ) * 0.85;
               const k = lc * 6;
               lpArr[k] = pos[i * 3];
