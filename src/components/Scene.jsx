@@ -182,7 +182,8 @@ export default function Scene() {
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
-    scene.add(new THREE.Points(ptGeom, ptMat));
+    const points = new THREE.Points(ptGeom, ptMat);
+    scene.add(points);
 
     // Connection lines
     const lpArr = new Float32Array(MAX_LINKS * 6);
@@ -229,7 +230,8 @@ export default function Scene() {
       vertexColors: true, transparent: true, opacity: 0.15,
       blending: THREE.AdditiveBlending, depthWrite: false, wireframe: true
     });
-    scene.add(new THREE.Mesh(tubeGeo, tubeMat));
+    const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+    scene.add(tubeMesh);
 
     // Hub node shapes
     const hubMeshes = HUBS.map((hub, i) => {
@@ -506,17 +508,38 @@ export default function Scene() {
       unbind();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouse);
+      
+      scene.remove(points);
+      scene.remove(lineSegs);
+      scene.remove(tubeMesh);
+      
       renderer.dispose();
       sprite.dispose();
       ptGeom.dispose();
       ptMat.dispose();
       lGeom.dispose();
+      lMat.dispose();
       tubeGeo.dispose();
       tubeMat.dispose();
+
+      const disposed = new Set();
       hubMeshes.forEach(({ outerGroup }) => {
+        scene.remove(outerGroup);
         outerGroup.traverse((o) => {
           if (o.geometry) o.geometry.dispose();
-          if (o.material) o.material.dispose();
+          if (o.material) {
+            if (Array.isArray(o.material)) {
+              o.material.forEach(m => {
+                if (!disposed.has(m)) {
+                  m.dispose();
+                  disposed.add(m);
+                }
+              });
+            } else if (!disposed.has(o.material)) {
+              o.material.dispose();
+              disposed.add(o.material);
+            }
+          }
         });
       });
     };
