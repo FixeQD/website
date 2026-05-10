@@ -62,9 +62,50 @@ export default function Scene() {
     const activeTotal = isMobile ? Math.floor(TOTAL * 0.4) : TOTAL;
     const activeMaxLinks = isMobile ? Math.floor(MAX_LINKS * 0.4) : MAX_LINKS;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
-    renderer.setClearColor(0x04040a, 1);
+    let renderer;
+    try {
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl') || canvas.getContext('webgl2');
+      if (!gl) throw new Error("WebGL not supported");
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
+      renderer.setClearColor(0x04040a, 1);
+    } catch (e) {
+      console.warn("WebGL not supported, running fallback loop for UI.");
+      let raf;
+      let smoothRaw = 0;
+      
+      const fallbackTick = () => {
+        raf = requestAnimationFrame(fallbackTick);
+        const sp = scrollRef.current;
+        const raw = sp * (HUBS.length - 1);
+        
+        const fi = Math.min(Math.floor(raw), HUBS.length - 2);
+        const frac = raw - fi;
+        const c0 = HUB_RGB[fi], c1 = HUB_RGB[fi + 1];
+        const ar = c0[0] + (c1[0] - c0[0]) * frac;
+        const ag = c0[1] + (c1[1] - c0[1]) * frac;
+        const ab = c0[2] + (c1[2] - c0[2]) * frac;
+
+        const root = document.documentElement;
+        const hr = Math.round(ar * 255), hg = Math.round(ag * 255), hb = Math.round(ab * 255);
+        root.style.setProperty('--accent', `rgb(${hr},${hg},${hb})`);
+        root.style.setProperty('--accent-rgb', `${hr},${hg},${hb}`);
+
+        const spd = noMotion ? 1 : 0.02;
+        smoothRaw += (raw - smoothRaw) * spd;
+        for (let i = 0; i < HUBS.length; i++) {
+          const absP = Math.abs(smoothRaw - i);
+          const op = Math.max(0, Math.min(1, 1.2 - absP * 3.5));
+          const ty = (smoothRaw - i) * 40;
+          root.style.setProperty(`--opacity-${i}`, op);
+          root.style.setProperty(`--translate-${i}`, `${ty}px`);
+          root.style.setProperty(`--events-${i}`, op > 0.2 ? "auto" : "none");
+        }
+      };
+      
+      fallbackTick();
+      return () => cancelAnimationFrame(raf);
+    }
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(62, 1, 0.5, 3000);
