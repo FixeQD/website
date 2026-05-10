@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { bridge } from "../utils/bridge";
 
 const glass = {
@@ -11,19 +11,19 @@ const glass = {
 
 export default function LabContent({ progress }) {
   const onInteraction = () => bridge.emit("hover");
-  const [scramble, setScramble] = useState("ENCRYPTED_PAYLOAD_0X9F");
+  const scrambleRef = useRef(null);
 
   useEffect(() => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_!@#$%^&*()";
     const int = setInterval(() => {
-      if (Math.random() > 0.2) {
+      if (Math.random() > 0.2 && scrambleRef.current) {
         let str = "";
         for (let i = 0; i < 22; i++) {
           str += chars[Math.floor(Math.random() * chars.length)];
         }
-        setScramble(str);
+        scrambleRef.current.textContent = "> " + str;
       }
-    }, 60);
+    }, 80);
     return () => clearInterval(int);
   }, []);
 
@@ -89,7 +89,7 @@ export default function LabContent({ progress }) {
                 marginBottom: "0.6rem",
               }}
             >
-              Lab // 04
+              Lab
             </div>
             <div
               style={{
@@ -173,7 +173,7 @@ export default function LabContent({ progress }) {
             <br />
             <span style={{ color: "#686888" }}>[INFO]</span> Decoding stream...
             <br />
-            <span style={{ color: "#e2e2f0", opacity: 0.9 }}>&gt; {scramble}</span>
+            <span ref={scrambleRef} style={{ color: "#e2e2f0", opacity: 0.9 }}>&gt; ENCRYPTED_PAYLOAD_0X9F</span>
           </div>
         </div>
 
