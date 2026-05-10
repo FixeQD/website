@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { me } from '../data'
 
 const SECTIONS = ['hero', 'about', 'projects', 'lab']
 const CHAPTER_COUNT = SECTIONS.length
@@ -105,7 +106,7 @@ export default function Nav({ chapter, scroll, onJump }) {
               letterSpacing: '-0.01em',
             }}
           >
-            fixeq
+            {me.handle}
           </button>
 
           <a
