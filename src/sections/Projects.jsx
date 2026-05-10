@@ -18,10 +18,17 @@ function ProjectCard({ project, onHover }) {
     onHover?.();
   };
 
+  const Component = project.url ? "a" : "div";
+
   return (
-    <div
+    <Component
       onMouseEnter={onEnter}
       onMouseLeave={() => setHovered(false)}
+      onFocus={onEnter}
+      onBlur={() => setHovered(false)}
+      href={project.url}
+      target={project.url ? "_blank" : undefined}
+      rel={project.url ? "noopener noreferrer" : undefined}
       style={{
         ...glass,
         padding: "1.75rem",
@@ -32,8 +39,10 @@ function ProjectCard({ project, onHover }) {
         display: "flex",
         flexDirection: "column",
         gap: "0.75rem",
+        textDecoration: "none",
+        color: "inherit",
+        outline: "none",
       }}
-      onClick={() => project.url && window.open(project.url, "_blank")}
     >
       <div
         style={{
@@ -116,7 +125,7 @@ function ProjectCard({ project, onHover }) {
           </span>
         ))}
       </div>
-    </div>
+    </Component>
   );
 }
 
