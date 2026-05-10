@@ -1,6 +1,8 @@
 {
 	"buildCommand": "bun run build",
 	"installCommand": "bun install",
-	"framework": "nuxtjs",
-	"regions": ["fra1"]
+	"framework": "vite",
+	"regions": [
+		"fra1"
+	]
 }
