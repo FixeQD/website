@@ -12,20 +12,20 @@ export const me = {
 }
 
 export const socials = [
-  { name: 'GitHub',    url: 'https://github.com/FixeQD',                        icon: 'github' },
-  { name: 'Discord',   url: 'https://discord.com/users/853621876551188490',      icon: 'discord' },
-  { name: 'Instagram', url: 'https://instagram.com/fixeq.dev',                  icon: 'instagram' },
+  { name: 'GitHub', url: 'https://github.com/FixeQD', icon: 'github' },
+  { name: 'Discord', url: 'https://discord.com/users/853621876551188490', icon: 'discord' },
+  { name: 'Instagram', url: 'https://instagram.com/fixeq.dev', icon: 'instagram' },
 ]
 
 export const achievements = [
   {
     title: 'Self-taught',
-    desc: "No bootcamp, no degree. Just docs, Stack Overflow, and a lot of errors that took three hours to find.",
+    desc: "No bootcamp, no degree. Just docs, Stack Overflow, and a lot of errors that took three hours to find",
     color: '#8b5cf6',
   },
   {
     title: 'Open Source',
-    desc: "A few repos on GitHub that people actually use. Still a bit weird to think about.",
+    desc: "A few repos on GitHub that people actually use",
     color: '#f59e0b',
   },
   {
@@ -35,48 +35,40 @@ export const achievements = [
   },
   {
     title: 'Problem Solver',
-    desc: "I genuinely enjoy debugging sometimes. Yes, I know how that sounds.",
+    desc: "I genuinely enjoy debugging sometimes. Yes, I know how that sounds",
     color: '#10b981',
   },
   {
     title: 'AI-assisted',
-    desc: "Not a vibe coder. I use AI as a tool and actually understand what it generates.",
+    desc: "Not a vibe coder. I use AI as a tool and actually understand what it generates",
     color: '#00d9ff',
   },
 ]
 
 export const skills = [
   { name: 'TypeScript', color: '#3178c6' },
-  { name: 'React',      color: '#61dafb' },
-  { name: 'Vue.js',     color: '#42b883' },
-  { name: 'Rust',       color: '#ce422b' },
-  { name: 'Node.js',    color: '#339933' },
-  { name: 'Python',     color: '#3776ab' },
-  { name: 'Kotlin',     color: '#7f52ff' },
-  { name: 'Docker',     color: '#2496ed' },
-  { name: 'MongoDB',    color: '#47a248' },
-  { name: 'Tailwind',   color: '#38bdf8' },
+  { name: 'React', color: '#61dafb' },
+  { name: 'Vue.js', color: '#42b883' },
+  { name: 'Rust', color: '#ce422b' },
+  { name: 'Node.js', color: '#339933' },
+  { name: 'Python', color: '#3776ab' },
+  { name: 'Kotlin', color: '#7f52ff' },
+  { name: 'Docker', color: '#2496ed' },
+  { name: 'MongoDB', color: '#47a248' },
+  { name: 'Tailwind', color: '#38bdf8' },
 ]
 
 export const projects = [
   {
     name: 'Postail',
-    desc: 'Desktop email client. Rust backend via Tauri, React + Zustand frontend. Built it because I wanted a client that works exactly how I want.',
+    desc: 'Secure desktop email client. Rust backend via Tauri, React + Zustand frontend',
     tags: ['Rust', 'Tauri', 'React', 'TypeScript'],
     color: '#ce422b',
     url: null,
     wip: true,
   },
   {
-    name: 'github-readme-stats (self-hosted)',
-    desc: 'Running my own fork with a custom JSON endpoint. No rate limiting, no flakiness on my portfolio.',
-    tags: ['Node.js', 'Self-hosted', 'API'],
-    color: '#339933',
-    url: 'https://github.com/FixeQD',
-    wip: false,
-  },
-  {
-    name: 'spicetify-cat-jam-synced',
+    name: 'Spicetify Cat Jam Synced',
     desc: 'A Spicetify extension that syncs a cat head-bobbing animation to the actual beat of the song. TypeScript + Bun.',
     tags: ['TypeScript', 'Bun', 'Spicetify'],
     color: '#f59e0b',
