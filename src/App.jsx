@@ -34,7 +34,12 @@ export default function App() {
 
   useEffect(() => {
     const onKeyDown = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      const interactiveTags = ['INPUT', 'TEXTAREA', 'BUTTON', 'SELECT', 'A'];
+      if (
+        interactiveTags.includes(e.target.tagName) ||
+        e.target.isContentEditable ||
+        e.target.getAttribute('role') === 'button'
+      ) return;
 
       if (e.code === 'Space') {
         e.preventDefault();
