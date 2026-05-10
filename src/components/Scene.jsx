@@ -237,14 +237,16 @@ export default function Scene() {
       const group = new THREE.Group();
       const wires = [];
 
-      const matCore = new THREE.MeshBasicMaterial({ color: 0x04040a, transparent: true, opacity: 0.85 });
-      const matWire = new THREE.MeshBasicMaterial({
+      const matCore = new THREE.MeshPhongMaterial({ color: 0x04040a, transparent: true, opacity: 0.85, shininess: 100 });
+      const matWire = new THREE.MeshPhongMaterial({
         color, wireframe: true, transparent: true, opacity: 0.25,
         blending: THREE.AdditiveBlending, depthWrite: false,
+        emissive: color, emissiveIntensity: 0.2
       });
-      const matWire2 = new THREE.MeshBasicMaterial({
+      const matWire2 = new THREE.MeshPhongMaterial({
         color, wireframe: true, transparent: true, opacity: 0.08,
         blending: THREE.AdditiveBlending, depthWrite: false,
+        emissive: color, emissiveIntensity: 0.1
       });
 
       const addShape = (geom, y = 0, rx = 0, ry = 0) => {
