@@ -118,15 +118,24 @@ void main() {
   // Soft diffuse glow
   float soft = exp(-d * d * 20.0) * 0.45;
 
-  // Pulsing ring
-  float ringR = 0.31 + sin(uTime * 0.55 + uSeed) * 0.025 * uActive;
-  float ring  = smoothstep(ringR - 0.022, ringR, d) * smoothstep(ringR + 0.042, ringR, d);
-  float ringA = ring * (0.5 + sin(uTime * 2.8 + uSeed) * 0.5) * uActive;
-
+  // Sonar expanding waves
+  float sonar = 0.0;
+  if (uActive > 0.5) {
+    float period = 1.2;
+    float maxR = 0.45;
+    for (int i = 0; i < 4; i++) {
+      float offset = float(i) * 0.25;
+      float age = fract((uTime * 1.0 + offset + uSeed) / period);
+      float r = age * maxR;
+      float fade = (1.0 - age) * (1.0 - age);
+      float ring = 1.0 - smoothstep(0.0, 0.012, abs(d - r));
+      sonar += ring * fade;
+    }
+  }
+  float sonarContrib = sonar * 0.6;
   float vis = smoothstep(0.0, 0.4, uProximity) * 0.7 + uActive * 0.55;
-  float intensity = (soft + ringA * 0.95) * vis;
+  float intensity = (soft + sonarContrib) * vis;
   if (intensity < 0.004) discard;
-
   gl_FragColor = vec4(uColor * (1.0 + soft * 1.8 * uActive), intensity);
 }
 `;
