@@ -7,19 +7,58 @@ let isInitialized = false;
 const refs = new Set();
 const setters = new Set();
 
+const HUB_PROGS = [1 / 3, 2 / 3, 1.0];
+
+const SLOW_RADIUS = 0.09;
+const MIN_SPEED = 0.18;
+const SCROLL_IDLE_MS = 150;
+
+let lastScrollTime = 0;
+
+function speedFactor(current, target) {
+  // Only slow when scrolling forward.
+  if (target <= current) return 1;
+
+  for (const hp of HUB_PROGS) {
+    const dist = hp - current; // positive = hub is ahead
+    if (dist > 0 && dist < SLOW_RADIUS) {
+      const t = dist / SLOW_RADIUS;
+      return MIN_SPEED + (1 - MIN_SPEED) * (t * t);
+    }
+  }
+  return 1;
+}
+
 function updateTarget() {
+  lastScrollTime = Date.now();
   const max = document.documentElement.scrollHeight - window.innerHeight;
   targetProgress = max > 0 ? window.scrollY / max : 0;
 }
 
 function tick() {
   const diff = targetProgress - currentProgress;
-  const maxSpd = 0.0035;
+  const factor = speedFactor(currentProgress, targetProgress);
+  const isIdle = (Date.now() - lastScrollTime) > SCROLL_IDLE_MS;
+
+  // In a slow zone with no active scrolling -> drift to the hub it's approaching
+  if (factor < 1 && isIdle) {
+    const snapTarget = HUB_PROGS.find((hp) => hp >= currentProgress) ?? currentProgress;
+    const snapDiff = snapTarget - currentProgress;
+    if (Math.abs(snapDiff) > 0.00005) {
+      currentProgress += snapDiff * 0.06;
+      refs.forEach((ref) => { ref.current = currentProgress; });
+      setters.forEach((set) => set(currentProgress));
+    }
+    requestAnimationFrame(tick);
+    return;
+  }
+
+  const maxSpd = 0.0035 * factor;
 
   if (Math.abs(diff) > maxSpd) {
     currentProgress += Math.sign(diff) * maxSpd;
   } else {
-    currentProgress += diff * 0.15;
+    currentProgress += diff * 0.15 * factor;
   }
 
   if (Math.abs(diff) > 0.00005) {
