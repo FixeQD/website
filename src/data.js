@@ -12,9 +12,9 @@ export const me = {
 }
 
 export const socials = [
-  { name: 'GitHub', url: 'https://github.com/FixeQD', icon: 'github' },
-  { name: 'Discord', url: 'https://discord.com/users/853621876551188490', icon: 'discord' },
-  { name: 'Instagram', url: 'https://instagram.com/fixeq.dev', icon: 'instagram' },
+  { name: 'GitHub', url: 'https://github.com/FixeQD', icon: 'faGithub' },
+  { name: 'Discord', url: 'https://discord.com/users/853621876551188490', icon: 'faDiscord' },
+  { name: 'Instagram', url: 'https://instagram.com/fixeq.dev', icon: 'faInstagram' },
 ]
 
 export const achievements = [
