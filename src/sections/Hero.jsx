@@ -62,6 +62,7 @@ const SocialIcon = ({ social }) => {
       rel="noopener noreferrer"
       title={social.name}
       aria-label={`Visit ${social.name}`}
+      data-magnetic
       style={{
         width: 38,
         height: 38,
@@ -171,6 +172,7 @@ export default function Hero() {
           }}
         >
           <button
+            data-magnetic
             onClick={() =>
               window.scrollTo({
                 top: window.innerHeight * 1.25,

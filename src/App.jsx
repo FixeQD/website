@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import Scene from './components/Scene'
+import Cursor from './components/Cursor'
 import Nav from './components/Nav'
 import Hero from './sections/Hero'
 import About from './sections/About'
@@ -43,15 +44,15 @@ export default function App() {
 
       if (e.code === 'Space') {
         e.preventDefault();
-        
+
         const max = document.documentElement.scrollHeight - window.innerHeight;
         const currentProgress = max > 0 ? window.scrollY / max : 0;
         const currentRaw = currentProgress * (CHAPTER_COUNT - 1);
         const currentChapter = Math.floor(currentRaw + 0.5);
-        
+
         const direction = e.shiftKey ? -1 : 1;
         const nextChapter = Math.max(0, Math.min(currentChapter + direction, CHAPTER_COUNT - 1));
-        
+
         jumpTo(nextChapter);
       }
     };
@@ -62,6 +63,7 @@ export default function App() {
 
   return (
     <>
+      <Cursor />
       <Scene />
       <Nav chapter={chapter} onJump={jumpTo} />
 
@@ -87,4 +89,3 @@ export default function App() {
     </>
   )
 }
-

@@ -114,6 +114,7 @@ export default function Nav({ chapter, onJump }) {
             href="https://github.com/FixeQD"
             target="_blank"
             rel="noopener noreferrer"
+            data-magnetic
             style={{
               fontFamily: 'IBM Plex Mono, monospace',
               fontSize: '0.78rem',
