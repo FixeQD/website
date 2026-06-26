@@ -36,21 +36,18 @@ function updateTarget() {
 }
 
 function tick() {
-  const diff = targetProgress - currentProgress;
+  let diff = targetProgress - currentProgress;
   const factor = speedFactor(currentProgress, targetProgress);
   const isIdle = (Date.now() - lastScrollTime) > SCROLL_IDLE_MS;
 
-  // In a slow zone with no active scrolling -> drift to the hub it's approaching
+  // Gently pull toward the nearest hub when idle inside a slowdown zone
   if (factor < 1 && isIdle) {
-    const snapTarget = HUB_PROGS.find((hp) => hp >= currentProgress) ?? currentProgress;
-    const snapDiff = snapTarget - currentProgress;
-    if (Math.abs(snapDiff) > 0.00005) {
-      currentProgress += snapDiff * 0.06;
-      refs.forEach((ref) => { ref.current = currentProgress; });
-      setters.forEach((set) => set(currentProgress));
-    }
-    requestAnimationFrame(tick);
-    return;
+    const nearestHub = HUB_PROGS.reduce((best, hp) => {
+      const d = Math.abs(hp - currentProgress);
+      return d < best.dist ? { hp, dist: d } : best;
+    }, { hp: currentProgress, dist: Infinity });
+    currentProgress += (nearestHub.hp - currentProgress) * 0.03;
+    diff = targetProgress - currentProgress;
   }
 
   const maxSpd = 0.0035 * factor;
