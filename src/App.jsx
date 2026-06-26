@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Scene from './components/Scene'
 import Cursor from './components/Cursor'
+import SvgOverlay from './components/SvgOverlay'
 import Nav from './components/Nav'
 import Hero from './sections/Hero'
 import About from './sections/About'
@@ -64,6 +65,7 @@ export default function App() {
   return (
     <>
       <Cursor />
+      <SvgOverlay />
       <Scene />
       <Nav chapter={chapter} onJump={jumpTo} />
 

@@ -233,13 +233,19 @@ export default function Hero() {
         >
           scroll
         </span>
-        <div
+        <svg
+          width={16}
+          height={12}
+          viewBox="0 0 16 12"
+          fill="none"
           style={{
-            width: 1,
-            height: 38,
-            background: "linear-gradient(to bottom, rgba(var(--accent-rgb), 0.53), transparent)",
+            color: "rgba(var(--accent-rgb), 0.5)",
+            animation: "bounce-down 1.8s ease-in-out infinite",
           }}
-        />
+        >
+          <path d="M1 1l7 7 7-7" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M1 5l7 7 7-7" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" opacity={0.35} />
+        </svg>
       </div>
     </div>
   );

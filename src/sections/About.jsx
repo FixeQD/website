@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { me, achievements, skills } from "../data";
 import { bridge } from "../utils/bridge";
 import { useGithubStats } from "../hooks";
@@ -10,6 +11,29 @@ const glass = {
   border: "1px solid rgba(255,255,255,0.07)",
   borderRadius: "14px",
 };
+
+function SkillBadge({ skill, onInteraction }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <span
+      onMouseEnter={() => { setHov(true); onInteraction(); }}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        fontFamily:   "IBM Plex Mono, monospace",
+        fontSize:     "0.75rem",
+        padding:      "0.3rem 0.7rem",
+        borderRadius: "5px",
+        border:       `1px solid ${skill.color}${hov ? '77' : '44'}`,
+        color:        skill.color,
+        background:   `${skill.color}${hov ? '1a' : '0d'}`,
+        boxShadow:    hov ? `0 0 14px ${skill.color}33, 0 0 5px ${skill.color}1a` : 'none',
+        transition:   "border-color 0.2s, background 0.2s, box-shadow 0.25s",
+      }}
+    >
+      {skill.name}
+    </span>
+  );
+}
 
 export default function AboutContent() {
   const onInteraction = () => bridge.emit("hover");
@@ -136,21 +160,7 @@ export default function AboutContent() {
           </span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
             {skills.map((skill) => (
-              <span
-                key={skill.name}
-                onMouseEnter={onInteraction}
-                style={{
-                  fontFamily: "IBM Plex Mono, monospace",
-                  fontSize: "0.75rem",
-                  padding: "0.3rem 0.7rem",
-                  borderRadius: "5px",
-                  border: `1px solid ${skill.color}44`,
-                  color: skill.color,
-                  background: `${skill.color}0d`,
-                }}
-              >
-                {skill.name}
-              </span>
+              <SkillBadge key={skill.name} skill={skill} onInteraction={onInteraction} />
             ))}
           </div>
         </div>
@@ -226,7 +236,7 @@ export default function AboutContent() {
                 }}>
                   Top Languages
                 </div>
-                
+
                 <div style={{
                   display: "flex",
                   height: "6px",
